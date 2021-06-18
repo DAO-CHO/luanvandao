@@ -1,0 +1,128 @@
+@page "/Coquan"
+@using System.Threading.Tasks;
+@using System.Collections.Generic;
+@using QUANLIVANBAN.Data
+@inject NavigationManager NavigationManager
+@inject CoquanData COQUAN 
+<div class="container">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="block">
+                <div class="header">
+                    <h2>DANH SÁCH CƠ QUAN</h2>
+                </div>
+                <div class="content">
+                    <table cellpadding="0" cellspacing="0" width="100%" class="table table-bordered table-striped sortable">
+                        <thead>
+                            <tr>
+                                <th width="27%">Cơ Quan</th>
+                                <th width="60%">Ghi Chú</th>
+                                <th width="13%"></th>
+                            </tr>
+                        </thead>
+                        @foreach (var coquan in cqList)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@coquan.CoQuan</td>
+                                    <td>@coquan.CoQuan_GhiChu</td>
+                                    
+                                    <td>
+                                        <a class="widget-icon widget-icon-dark"
+                                            @onclick="(async () => await Load(coquan.CoQuan_id))"><span
+                                                class="icon-pencil"></span></a>
+                                        <a href="#modal_default_6" data-toggle="modal"  @onclick="(async () => await Loadxoa(coquan.CoQuan_id))"
+                                            class="widget-icon widget-icon-dark"><span class="icon-trash"></span></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <div class="modal" id="modal_default_6" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">TIẾP TỤC ĐỂ XÓA</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-success btn-clean" data-dismiss="modal"
+                                            @onclick="@(async () => {await Delete(cqxoa.CoQuan_id);})">Tiếp Tục</button>
+                                            <button type="button" class="btn btn-danger btn-clean"
+                                            data-dismiss="modal">Thoát</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="block">
+                <div class="header">
+                    <h2>Cập Nhật Cơ Quan</h2>
+                </div>
+                <div class="content controls">
+                        <EditForm Model="@cq">
+                        <DataAnnotationsValidator />
+                            <div class="form-row">
+                                <div class="col-md-2">Cơ Quan:</div>
+                                <div class="col-md-10">
+                                    <InputText type="text" id="CoQuan" class="form-control" @bind-Value="cq.CoQuan"/>
+                                    <ValidationMessage For="@(() => cq.CoQuan)" />
+                                </div>
+                            </div>                                       
+                            <div class="form-row">
+                                <div class="col-md-2">Ghi Chú:</div>
+                                <div class="col-md-10">
+                                    <InputTextArea class="form-control" id="CoQuan_GhiChu" @bind-Value="cq.CoQuan_GhiChu"></InputTextArea>
+                                    <ValidationMessage For="@(() => cq.CoQuan_GhiChu)" />
+                                </div>
+                            </div> 
+                    <div class="form-row">
+                        <button type="button" class="btn btn-primary" @onclick="Save">LƯU CƠ QUAN</button>
+                    </div>
+                    </EditForm>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@code {
+    protected List<Coquans> cqList = new List<Coquans>();
+    protected Coquans cq = new Coquans();
+    protected Coquans cqxoa = new Coquans();
+    protected async override Task OnInitializedAsync()
+    {
+        cqList = await COQUAN.GetAllCoquan();
+    }
+    private async Task Save()
+    {
+        if (cq.CoQuan_id == null)
+        {
+            await COQUAN.AddCoquan(cq);
+        }
+        else
+        {
+            await COQUAN.UpdateCoquan(cq);
+        }
+        await OnInitializedAsync();
+    }
+    protected async Task Load(string id)
+    {
+        cq = await COQUAN.GetCoquanData(id);
+    }
+    protected async Task Loadxoa(string id)
+    {
+        cqxoa = await COQUAN.GetCoquanData(id);
+    }
+    private async Task Delete(string id)
+    {
+        await COQUAN.DeleteCoquan(id);
+        await OnInitializedAsync();
+    }
+
+}

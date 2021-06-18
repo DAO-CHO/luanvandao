@@ -1,0 +1,172 @@
+@page "/Vanban"
+@using System.Threading.Tasks;
+@using System.Collections.Generic;
+@using QUANLIVANBAN.Data
+@using BlazorInputFile
+@using System.Text;
+@using iTextSharp.text.pdf;
+@using iTextSharp.text.pdf.parser;
+@using System.Linq;
+@inject VanbanData VB
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="block">
+                <div class="header">
+                    <h2>DANH SÁCH VĂN BẢN</h2>
+                </div>
+                <div class="content">
+                    <table cellpadding="0" cellspacing="0" width="100%" class="table table-bordered table-striped sortable">
+                        <thead>
+                            <tr>
+                                <th>Tiêu Đề</th>
+                                <th>Số/Ký Hiệu</th>
+                                <th>Trích Yếu</th>
+                                <th>Số Trang</th>
+                                @* <th>Nội Dung</th> *@
+                                <th>Ghi Chú</th>
+                                <th width="10%">Đính Kèm</th>
+                                <th width="12%"></th>
+                            </tr>
+                        </thead>
+                        @foreach (var vban in vbList)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@vban.VanBan_TieuDe</td>
+                                    <td>@vban.VanBan_So_KyHieu</td>
+                                    <td>@vban.VanBan_TrichYeu</td>
+                                    <td>@vban.VanBan_SoTrang</td>
+                                    @* <td>@vban.VanBan_NoiDung</td> *@
+                                    <td>@vban.VanBan_GhiChu</td>
+                                    <td><a href="@vban.VanBan_DinhKem">Đính Kèm</a></td>
+                                   <td>
+                                        <a class="widget-icon widget-icon-dark"
+                                            @onclick="(async () => await Load(vban.VanBan_id))"><span
+                                                class="icon-pencil"></span></a>
+                                        <a @onclick="@(async () => {await Delete(vban.VanBan_id);})"
+                                            class="widget-icon widget-icon-dark"><span class="icon-trash"></span></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="block ">
+                <div class="header">
+                    <h2>Cập Nhật Văn Bản</h2>
+                </div>
+                <div class="content controls">
+                    <div class="form-row">
+                        <div class="col-md-3">Tiêu Đề:</div>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" @bind="vb.VanBan_TieuDe" />
+                        </div>
+                    </div>
+
+                     <div class="form-row">
+                        <div class="col-md-3">Số/Ký Hiệu:</div>
+                        <div class="col-md-9">
+                            <input type="text"  class="form-control" @bind="vb.VanBan_So_KyHieu" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-row">
+                        <div class="col-md-3">Trích Yếu:</div>
+                        <div class="col-md-9">
+                            <input type="text"  class="form-control" @bind="vb.VanBan_TrichYeu" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Số Trang:</div>
+                        <div class="col-md-9">
+                            <input type="number"  class="form-control" @bind="vb.VanBan_SoTrang" />
+                        </div>
+                    </div>
+
+                   
+                    
+                    
+
+                    <div class="form-row">
+                        <div class="col-md-3">Ghi Chú:</div>
+                        <div class="col-md-9">
+                            <textarea  type="text" class=" form-control" @bind="vb.VanBan_GhiChu"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Đính Kèm:</div>
+                        <div class="col-md-9">
+                            <InputFile OnChange="HandleFileSelected" multiple />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <button type="button" class="btn btn-success btn-clean" @onclick="Save">LƯU VĂN BẢN</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@code {
+    protected List<Vanbans> vbList = new List<Vanbans>();
+    protected Vanbans vb = new Vanbans();
+    protected async override Task OnInitializedAsync()
+    {
+        vbList = await VB.GetAllVanban();
+    }
+
+    private async void Save()
+    {
+        if (vb.VanBan_id == null)
+        {
+            vb.VanBan_DinhKem = url;
+            await VB.AddVanban(vb);
+        }
+        else
+        {
+            await VB.UpdateVanban(vb);
+        }
+         await OnInitializedAsync();
+    }
+    protected async Task Load(string id)
+    {
+        vb = await VB.GetVanbanData(id);
+
+    }
+    private async Task Delete(string id)
+    {
+        await VB.DeleteVanban(id);
+    }
+    IFileListEntry file;
+    private string url;
+    private string scanstring;
+    async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        file = files.FirstOrDefault();
+        if (file != null)
+        {
+            url = await VB.UploadAsync(file);      
+        }
+        using (PdfReader reader = new PdfReader(url))
+        {
+            for (int y = 1; y <= reader.NumberOfPages; y++)
+            {
+                LocationTextExtractionStrategy strategy = new LocationTextExtractionStrategy();
+                string line = PdfTextExtractor.GetTextFromPage(reader, y, new SimpleTextExtractionStrategy());
+                line = Encoding.UTF8.GetString(Encoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(line)));
+                scanstring += line;
+                vb.VanBan_NoiDung = scanstring;
+                vb.VanBan_SoTrang = reader.NumberOfPages.ToString();
+            }
+        }
+    }
+}

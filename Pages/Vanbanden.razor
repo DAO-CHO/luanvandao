@@ -1,0 +1,253 @@
+@page "/Vanbanden"
+@using System.Threading.Tasks;
+@using System.Collections.Generic;
+@using QUANLIVANBAN.Data
+@using BlazorInputFile
+@using System.IO;
+@using iTextSharp.text.pdf;
+@using iTextSharp.text.pdf.parser;
+@using System.Text;
+@inject VanbandenData DEN
+@inject LoaivanbanData loaivb
+@inject TaikhoanData taikhoan
+@inject CoquanbanhanhData CQBH
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="block">
+                <div class="header">
+                    <h2>DANH SÁCH VĂN BẢN ĐẾN</h2>
+                </div>
+                <div class="content">
+                    <table cellpadding="0" cellspacing="0" width="100%"
+                        class="table table-bordered table-striped sortable">
+                        <thead>
+                            <tr>
+                                <th>Tiêu Đề</th>
+                                <th>Số Đến</th>
+                                <th>Người Gửi</th>
+                                <th>Người Nhận</th>
+                                <th width="10%">Đính Kèm</th>
+                                <th width="12%"></th>
+                            </tr>
+                        </thead>
+                        @foreach (var den in vbdenList)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@den.VBDen_TieuDe</td>
+                                    <td>@den.VBDen_SoDen</td>
+                                    <td>@den.VBDen_NguoiGui</td>
+                                    <td>@den.VBDen_NguoiNhan</td>
+                                    <td><a href="@den.VBDen_DinhKem">Đính Kèm</a></td>
+                                    <td>
+                                        <a class="widget-icon widget-icon-dark"
+                                            @onclick="(async () => await Load(den.VBDenId))"><span
+                                                class="icon-pencil"></span></a>
+                                        <a href="#modal_default_6" data-toggle="modal"  @onclick="(async () => await Loadxoa(den.VBDenId))"
+                                            class="widget-icon widget-icon-dark"><span class="icon-trash"></span></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <div class="modal" id="modal_default_6" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">TIẾP TỤC ĐỂ XÓA</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-success btn-clean" data-dismiss="modal"
+                                            @onclick="@(async () => {await Delete(vbdenxoa.VBDenId);})">Tiếp Tục</button>
+                                            <button type="button" class="btn btn-danger btn-clean"
+                                            data-dismiss="modal">Thoát</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="block ">
+                <div class="header">
+                    <h2>Cập Nhật Văn Bản Đến</h2>
+                </div>
+                <div class="content controls">
+                    <div class="form-row">
+                        <div class="col-md-3">Tiêu Đề:</div>
+                        <div class="col-md-9">
+                            <select class="select2" @bind="vbden.VBDen_TieuDe" style="width: 100%;" tabindex="-1">
+                                @foreach (var lvanban in loaiList)
+                                {
+                                    <option value="@lvanban.LoaiVanBan">@lvanban.LoaiVanBan</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Ngày Nhận:</div>
+                        <div class="col-md-9">
+                            <input type="Date" class="form-control" @bind="vbden.VBDen_NgayNhan" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3">Người Nhận:</div>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" readonly value="@loginup.Taikhoanhoten" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Người Gửi:</div>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" @bind="vbden.VBDen_NguoiGui" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3">Nơi Gửi:</div>
+                        <div class="col-md-9">
+                            <select class="select2" @bind="vbden.VBDen_NoiNhan" style="width: 100%;" tabindex="-1">
+                                @foreach (var ngui in bhList)
+                                {
+                                    <option value="@ngui.TenCoQuan">@ngui.TenCoQuan</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Số Trang:</div>
+                        <div class="col-md-9">
+                            <input type="number" disabled class="form-control" @bind="vbden.VBDen_SoTrang" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Số Đến:</div>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" @bind="vbden.VBDen_SoDen" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Trích yếu:</div>
+                        <div class="col-md-9">
+                            @* <input type="text" class="form-control" @bind="vbden.VBDen_TrichYeu" /> *@
+                            <textarea class="form-control" @bind="vbden.VBDen_TrichYeu"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Đính Kèm:</div>
+                        <div class="col-md-9">
+                            <InputFile OnChange="HandleFileSelected" multiple />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3" style="height: 25px; width: revert; margin-top: -2px;"><input type="checkbox" class="form-control" @bind="boolvalue"/></div>
+                            <div class="col-md-9">
+                                <label>Đồng ý để mọi người điều thấy văn bản?</label>                       
+                            </div>
+                        </div> 
+
+
+
+                    <div class="form-row">
+                        <button type="button" class="btn btn-primary" @onclick="Save">LƯU VĂN BẢN</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@code {
+    protected List<Vanbandens> vbdenList = new List<Vanbandens>();
+    protected List<Loaivanbans> loaiList = new List<Loaivanbans>();
+    protected List<Taikhoans> tkList = new List<Taikhoans>();
+    protected List<Coquanbanhanhs> bhList = new List<Coquanbanhanhs>();
+    protected Vanbandens vbden = new Vanbandens();
+    protected Vanbandens vbdenxoa = new Vanbandens();
+    
+    protected Taikhoans loginup = new Taikhoans();
+    protected async override Task OnInitializedAsync()
+    {
+        loginup=await taikhoan.shownoidung();
+        //vbdenList = await DEN.GetAllVanbanden();
+        vbdenList = await DEN.GetVanbandens_PB(loginup.Taikhoan_PhongBan);
+        loaiList = await loaivb.GetAllLoaivanban();
+        //tkList = await TK.GetAllTaikhoan();
+        bhList = await CQBH.GetAllCoquanbanhanh();
+        
+    }
+    public bool boolvalue { get; set; }
+    private async Task Save()
+    {
+        if (boolvalue)
+        {
+            vbden.VBDen_public = "true";
+        }
+        else
+        {
+            vbden.VBDen_public = "false";
+        }
+        boolvalue = !boolvalue;
+        if (vbden.VBDenId == null)
+        {
+            vbden.VBDen_DinhKem = url;
+            vbden.VBDen_NguoiNhan=loginup.Taikhoanhoten;
+            vbden.VBDen_phongban = loginup.Taikhoan_PhongBan;
+            await DEN.AddVanbanden(vbden);
+        }
+        else
+        {
+            //vbden.VBDen_NguoiNhan=loginup.Taikhoanhoten;
+            await DEN.UpdateVanbanden(vbden);
+        }
+        await OnInitializedAsync();
+    }
+    protected async Task Load(string id)
+    {
+        vbden = await DEN.GetVanbandenData(id);
+    }
+    protected async Task Loadxoa(string id)
+    {
+        vbdenxoa = await DEN.GetVanbandenData(id);
+    }
+    private async Task Delete(string id)
+    {
+        await DEN.DeleteVanbanden(id);
+        await OnInitializedAsync();
+    }
+
+    IFileListEntry file;
+    private string url;
+    private string scanstring;
+    async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        file = files.FirstOrDefault();
+        if (file != null)
+        {
+            url = await DEN.UploadAsync(file);
+        }
+        using (PdfReader reader = new PdfReader(url))
+        {
+            for (int y = 1; y <= reader.NumberOfPages; y++)
+            {
+                LocationTextExtractionStrategy strategy = new LocationTextExtractionStrategy();
+                string line = PdfTextExtractor.GetTextFromPage(reader, y, new SimpleTextExtractionStrategy());
+                line = Encoding.UTF8.GetString(Encoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(line)));
+                scanstring += line;
+                vbden.VBDen_NoiDung = scanstring;
+                vbden.VBDen_SoTrang = reader.NumberOfPages.ToString();
+            }
+        }
+    }
+}

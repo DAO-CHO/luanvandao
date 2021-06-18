@@ -1,0 +1,127 @@
+﻿@page "/index"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor _httpContextAccessor
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
+@inject IJSRuntime ijs
+@using QUANLIVANBAN.Data
+@inject TaikhoanData taikhoan
+@if (User.Identity.Name != null)
+{
+    <div class="container"> 
+<div class="col-md-2">
+    <div class="block block-drop-shadow">
+        <div class="head bg-dot30 np tac">
+            <img src="@Avatar" class="img-thumbnail img-circle" />
+        </div>
+        <div class="content controls">
+            <div class="form-row">
+                <div class="col-md-12">
+                    <div class="input-group file">
+                       <h2 style="text-align: center; margin-left: -15px;">@GivenName @Surname - @invb.Taikhoan_Quyen</h2>
+                       <h2 style="text-align: center; margin-left: -15px;">@invb.TaikhoanId</h2>
+                       <h2 style="text-align: center; margin-left: -15px;">@Email</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-12">
+                    <a href="/Logout" target="_top" class="btn btn-primary btn-block">Đăng Xuất</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-10">
+
+    <div class="block  block-drop-shadow">
+
+        <div class="header">
+            <h2>Thông Tin Cá Nhân</h2>
+        </div>
+        <div class="content controls">
+            <div class="form-row">
+                <div class="col-md-3">Họ:</div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" value="@Surname" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-3">Tên:</div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" value="@GivenName" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-3">Mail:</div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" value="@Email" />
+                </div>
+            </div>
+        </div>
+        <div class="content controls">
+            <div class="form-row">
+                <div class="col-md-3">Phòng Ban:</div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" value="@invb.Taikhoan_PhongBan" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-3">Trường Đại học:</div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" value="@invb.Taikhoan_ChucVu" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-3">Số Điện Thoại:</div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" value="@invb.Taikhoansdt" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+</div>
+}
+@code {
+    private ClaimsPrincipal User;
+    private string GivenName;
+    private string Surname;
+    private string Avatar;
+    private string Email;
+    protected Taikhoans invb = new Taikhoans();
+     protected async override Task OnInitializedAsync()
+    {
+        
+        base.OnInitialized();
+        try
+        {
+            invb=await taikhoan.shownoidung();
+            User = _httpContextAccessor.HttpContext.User;
+            var email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email);
+            var givenName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.GivenName);
+            var surname = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Surname);
+            var avatar = _httpContextAccessor.HttpContext.User.FindFirst("urn:google:image");
+            if (email != null)
+            {
+                Email = email.Value;
+                GivenName = givenName.Value;
+                Surname = surname.Value;
+                Avatar = avatar.Value;
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/");
+            }
+        }
+        catch { }
+    }
+}

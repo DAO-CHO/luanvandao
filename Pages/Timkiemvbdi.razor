@@ -1,0 +1,86 @@
+@page "/Timkiemvanbandi"
+@using QUANLIVANBAN.Data
+@inject LoaivanbanData loaivb
+@inject VanbandiData DI
+<div class="container">        
+
+        <div class="row">
+            <div class="col-md-9">
+                <div class="block block-transparent nm">
+                    <div class="content controls">
+                        <div class="form-row">
+                            <div class="col-md-12">
+                                <div class="input-group">
+                                    <input @bind="noidungvanban" class="form-control" placeholder="Tìm Kiếm Theo Nội Dung"/>
+                                    <div type="button" @onclick="Load_ndvanban" class="input-group-addon"><span class="icon-search"></span></div>
+                                </div>
+                            </div>
+                            @* <div class="col-md-3">
+                                <div class="input-group">
+                                    <div class="input-group-addon"><span class="icon-calendar"></span></div>
+                                    <input type="date" class="form-control datepicker" placeholder="Due by"/>
+                                </div>
+                            </div>                             *@
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="block block-transparent">
+                    <div class="content tasks">
+                        @foreach (var lvanban in vbdilist)
+                        {
+                        <div class="task-item priority-low">
+                            <div class="task-item-content">
+                                <div class="task-item-head">@lvanban.VBDi_TieuDe</div>
+                                <div class="task-item-subhead">@lvanban.VBDi_SoDi: @lvanban.VBDi_TrichYeu.Substring(0, 50) ...</div>
+                                <div class="task-item-date"><i class="icon-calendar"></i> @lvanban.VBDi_NgayGui &nbsp; <i class="icon-globe"></i> <a href="@lvanban.Dinhkem">Đính Kèm</a>&nbsp; <i class="icon-user"></i> @lvanban.VBDi_NguoiGui</div>                            
+                            </div>
+                        </div>                       
+                        }                       
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-md-3">
+                
+                <div class="block block-transparent">
+                    <div class="header">
+                        <h2>Loại Văn Bản</h2>                        
+                    </div>
+                    <div class="content list list-default">
+                        @foreach (var lvanban in loaiList)
+                        {
+                        <div class="list-item">                            
+                            <div class="list-text">
+                                <p @onclick="(async () => await Load(lvanban.LoaiVanBan))">@lvanban.LoaiVanBan</p>                                
+                            </div>                            
+                        </div>   
+                        }                    
+                    </div>
+                    
+                </div>    
+                
+            </div>
+        </div>
+        
+    </div> 
+
+@code {
+    protected List<Loaivanbans> loaiList = new List<Loaivanbans>();
+    protected List<Vanbandis> vbdilist = new List<Vanbandis>();
+    protected Vanbandis vbdi = new Vanbandis();
+    protected async override Task OnInitializedAsync()
+    {
+        loaiList = await loaivb.GetAllLoaivanban();
+    }
+    protected async Task Load(string loaivb)
+    {
+        vbdilist = await DI.GetVanbandis_loaivb(loaivb);
+    }
+    
+    private string noidungvanban;
+    protected async Task Load_ndvanban()
+    {
+        vbdilist = await DI.GetVanbandis_ndvanban(noidungvanban);
+    }
+}

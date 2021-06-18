@@ -1,0 +1,100 @@
+@startuml
+
+skinparam linetype ortho
+
+class VanBan{
+    + VanBan_Id : string
+    + VanBan_TieuDe :string
+    + VanBan_So_KyHieu: string
+    + VanBan_TrichYeu: string 
+    + VanBan_DinhKem: string
+    + VanBan_SoTrang: number
+    + VanBan_NoiDung: string
+    + VanBan_GhiChu: string
+}
+
+
+
+
+
+
+class LoaiVanBan{
+    + LoaiVanBan_Id: string
+    + LoaiVanBan: string
+    + LoaiVanBan_GhiChu: string
+
+}
+LoaiVanBan"1..*" -- "1" VanBan
+
+class CoQuanBanHanh{
+    + CQBH_Id: string
+    + CQBH_TenCoQuan: string
+    + CQBH_GhiChu: string
+}
+
+
+class PhongBan{
+    + PhongBan_Id: string
+    + PhongBan: string
+    + PhongBan_GhiChu: string
+}
+
+
+(VanBan, CoQuanBanHanh) . ChiTietDen
+class ChiTietDen{
+    + VanBan_Id: string
+    + CQBH_CoQuan: string
+}
+class NhanVien{
+    + NhanVien_Id
+    + NhanVien_HoTen
+    + NhanVien_DiaChi
+    + NhanVien_SDT
+    + NhanVien_Email
+    + NhanVien_Password
+    + PhongBan_PhongBan
+    + ChucVu_ChucVu
+    + Quyen_Quyen
+}
+NhanVien "1..*" -- "1" PhongBan
+(NhanVien, VanBan) . ChiTietDi
+class ChiTietDi{
+    + VanBan_Id: string
+    + NhanVien_Id: string
+}
+class ChucVu{
+    + ChucVu_Id: string
+    + ChucVu: string
+    + ChucVu_GhiChu: string
+}
+ChucVu "1" -- "1" NhanVien
+(ChucVu, NhanVien) . CV_NV
+class CV_NV{
+    + ChucVu: string
+    + NhiemKy: string
+}
+
+class TaoLapVanBan{
+    + TaoLap_Id: string
+    + TaoLap_TenVanBan: string
+    + TaoLap_NgayLap: Date
+}
+NhanVien "1..*" -- "1" TaoLapVanBan
+
+
+
+
+ class PhanQuyen{
+     + Quyen_Id: string
+     + Quyen: string
+     + Quyen_GhiChu: string
+ }
+PhanQuyen "1..*" -- "1" NhanVien
+class CoQuan{
+    + CoQuan_Id: string
+    + CoQuan: string
+    + CoQuan_GhiChu: string
+}
+CoQuan "1..*" -- "1" PhongBan
+
+@enduml

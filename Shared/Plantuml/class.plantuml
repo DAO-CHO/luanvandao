@@ -1,0 +1,113 @@
+@startuml
+
+skinparam linetype ortho
+
+class Nhanvien{
+    + NhanVien_Id
+    + Nhanvien_Password
+    + NhanVien_HoTen
+    + NhanVien_NgaySinh
+    + NhanVien_DiaChi
+    + NhanVien_SDT
+    + NhanVien_GioiTinh
+    + NhanVien_HinhAnh
+    + Google_Email
+}1
+class Vanbandi{
+    + VBDi_Id
+    + VBDi_TieuDe
+    + VBDi_LoaiVanBan_Id
+    + VBDi_NgayBanHanh 
+    + VBDi_SoDi 
+    + VBDi_NgayGui
+    + VBDi_NguoiGui 
+    + VBDi_NoiNhan 
+    + VBDi_SoTrang
+    + VBDi_NoiDung
+    + VBDi_TrichYeu
+    + VBDi_DinhKem
+    + VBDi_GhiChu
+
+}
+
+
+Vanbandi "1..*" -- "1..*" Nhanvien
+(Vanbandi, Nhanvien) . Vanbandi_nhanvien
+
+class Vanbandi_nhanvien{
+    + Nguoitao
+    + Nguoiky
+}
+
+
+class Phongban {
+    +PhongBan_Id
+    +PhongBan
+}
+
+' phongban "1" --"1..*" nhanvien
+
+class Chucvu{
+    +ChucVu_Id
+    +ChucVu
+    +ChucVu_GhiChu
+}
+Chucvu "1" --"1..*" Nhanvien
+
+class Coquan{
+    + CoQuan_Id
+    + CoQuan
+}
+Coquan "1" --"1..*" Phongban
+Phongban"1..*"--"1" Nhanvien
+
+class Noibanhanh{
+    + NoiBH_Id
+    + NoiBanHanh
+    + NoiBH_GhiChu
+}
+class Vanbanden{
+    + VBDen_Id
+    + VBDen_TieuDe
+    + VBDen_NgayBanHanh
+    + VBDen_NgayNhan 
+    + VBDen_SoDen  
+    + VBDen_NguoiNhan 
+    + VBDen_NguoiGui
+    + VBDen_SoTrang
+    + VBDen_NoiDung
+    + VBDen_TrichYeu
+    + VBDen_HanTraLoi
+    + VBDen_DinhKem
+    + VBDen_GhiChu
+}
+
+Noibanhanh"1..*"--"1" Vanbanden
+
+class Phanquyen{
+    + PhanQuyen_Id
+    + PhanQuyen_Quyen 
+}
+Phanquyen"1"--"1..*" Nhanvien
+
+class Loaivanban{
+    + LoaiVB_Id
+    + LoaiVanBan
+    + LoaiVB_GhiChu
+}
+
+Loaivanban"1..*"--"1" Vanbanden
+
+' class chucvu_nhanvien{
+'     + nhiemky : String
+'     void setChuvu(nhanvien nv)
+' }
+
+' note right of chucvu_nhanvien::nhiemky
+'   nhiem ky tu ngay den nay, 
+'   thoi gian hieu luc.
+'   vidu: 01/2020 - 01/2023
+' end note
+
+
+@enduml

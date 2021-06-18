@@ -1,0 +1,127 @@
+@page "/Chucvu"
+@using System.Threading.Tasks;
+@using System.Collections.Generic;
+@using QUANLIVANBAN.Data
+@inject NavigationManager NavigationManager
+@inject ChucvuData CHUCVU 
+<div class="container">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="block ">
+                <div class="header">
+                    <h2>DANH SÁCH CHỨC VỤ</h2>
+                </div>
+                <div class="content">
+                    <table cellpadding="0" cellspacing="0" width="100%" class="table table-bordered table-striped sortable">
+                        <thead>
+                            <tr>
+                                <th width="27%">Chức Vụ</th>
+                                <th width="60%">Ghi Chú</th>
+                                <th width="13%"></th>
+                            </tr>
+                        </thead>
+                        @foreach (var chucvu in cvList)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@chucvu.ChucVu</td>
+                                    <td>@chucvu.ChucVu_Ghichu</td>
+                                    <td>
+                                        <a class="widget-icon widget-icon-dark"
+                                            @onclick="(async () => await Load(chucvu.ChucVu_Id))"><span
+                                                class="icon-pencil"></span></a>
+                                        <a href="#modal_default_6" data-toggle="modal"  @onclick="(async () => await Loadxoa(chucvu.ChucVu_Id))"
+                                            class="widget-icon widget-icon-dark"><span class="icon-trash"></span></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <div class="modal" id="modal_default_6" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">TIẾP TỤC ĐỂ XÓA</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-success btn-clean" data-dismiss="modal"
+                                            @onclick="@(async () => {await Delete(cvxoa.ChucVu_Id);})">Tiếp Tục</button>
+                                            <button type="button" class="btn btn-danger btn-clean"
+                                            data-dismiss="modal">Thoát</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="block">
+                <div class="header">
+                    <h2>Cập Nhật Chức Vụ</h2>
+                </div>
+                <div class="content controls">
+                    <EditForm Model="@cv">
+                    <DataAnnotationsValidator />
+                    <div class="form-row">
+                        <div class="col-md-3">Chức Vụ:</div>
+                        <div class="col-md-9">
+                            <InputText type="text" id="cv" class="form-control" @bind-Value="cv.ChucVu"/>
+                            <ValidationMessage For="@(() => cv.ChucVu)" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3">Ghi Chú:</div>
+                        <div class="col-md-9">
+                            <InputTextArea class="form-control" id="CoQuan_GhiChu" @bind-Value="cv.ChucVu_Ghichu"></InputTextArea>
+                            <ValidationMessage For="@(() => cv.ChucVu_Ghichu)" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <button type="button" class="btn btn-primary" @onclick="Save">LƯU CHỨC VỤ</button>
+                    </div>
+                    </EditForm>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@code {
+    protected List<Chucvus> cvList = new List<Chucvus>();
+    protected Chucvus cv = new Chucvus();
+    protected Chucvus cvxoa = new Chucvus();
+    protected async override Task OnInitializedAsync()
+    {
+        cvList = await CHUCVU.GetAllChucvu();
+    }
+    private async Task Save()
+    {
+        if (cv.ChucVu_Id == null)
+        {
+            await CHUCVU.AddChucvu(cv);
+        }
+        else
+        {
+            await CHUCVU.UpdateChucVu(cv);
+        }
+        await OnInitializedAsync();
+    }
+    protected async Task Load(string id)
+    {
+        cv = await CHUCVU.GetChucvuData(id);
+    }
+    protected async Task Loadxoa(string id)
+    {
+        cvxoa = await CHUCVU.GetChucvuData(id);
+    }
+    private async Task Delete(string id)
+    {
+        await CHUCVU.DeleteChucvu(id);
+        await OnInitializedAsync();
+    }
+
+}

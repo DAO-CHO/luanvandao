@@ -1,0 +1,126 @@
+@page "/Coquanbanhanh"
+@using System.Threading.Tasks;
+@using System.Collections.Generic;
+@using QUANLIVANBAN.Data
+@inject CoquanbanhanhData CQBH
+<div class="container">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="block">
+                <div class="header">
+                    <h2>DANH SÁCH CƠ QUAN BAN HÀNH</h2>
+                </div>
+                <div class="content">
+                    <table cellpadding="0" cellspacing="0" width="100%" class="table table-bordered table-striped sortable">
+                        <thead>
+                            <tr>
+                                <th width="27%">Tên Cơ Quan</th>
+                                <th width="60%">Ghi Chú</th>
+                                <th width="13%"></th>
+                            </tr>
+                        </thead>
+                        @foreach (var banhanh in bhList)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@banhanh.TenCoQuan</td>
+                                    <td>@banhanh.CQBH_Ghichu</td>
+                                    <td>
+                                        <a class="widget-icon widget-icon-dark"
+                                            @onclick="(async () => await Load(banhanh.CQBH_id))"><span
+                                                class="icon-pencil"></span></a>
+                                        <a href="#modal_default_6" data-toggle="modal"  @onclick="(async () => await Loadxoa(banhanh.CQBH_id))"
+                                            class="widget-icon widget-icon-dark"><span class="icon-trash"></span></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <div class="modal" id="modal_default_6" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">TIẾP TỤC ĐỂ XÓA</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-success btn-clean" data-dismiss="modal"
+                                            @onclick="@(async () => {await Delete(bhxoa.CQBH_id);})">Tiếp Tục</button>
+                                            <button type="button" class="btn btn-danger btn-clean"
+                                            data-dismiss="modal">Thoát</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="block">
+                <div class="header">
+                    <h2>Cập Nhật Cơ Quan Ban Hành</h2>
+                </div>
+                <div class="content controls">
+                        <EditForm Model="@bh">
+                        <DataAnnotationsValidator />
+                            <div class="form-row">
+                                <div class="col-md-2">Cơ Quan:</div>
+                                <div class="col-md-10">
+                                    <InputText type="text" id="TenCoQuan" class="form-control" @bind-Value="bh.TenCoQuan"/>
+                                    <ValidationMessage For="@(() => bh.TenCoQuan)" />
+                                </div>
+                            </div>                                       
+                            <div class="form-row">
+                                <div class="col-md-2">Ghi Chú:</div>
+                                <div class="col-md-10">
+                                    <InputTextArea  class="form-control" id="LoaiVB_Ghichu" @bind-Value="bh.CQBH_Ghichu"></InputTextArea>
+                                    <ValidationMessage For="@(() => bh.CQBH_Ghichu)" />
+                                </div>
+                            </div> 
+                    <div class="form-row">
+                        <button type="button" class="btn btn-primary" @onclick="Save">LƯU CƠ QUAN BAN HÀNH</button>
+                    </div>
+                    </EditForm>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@code {
+    protected List<Coquanbanhanhs> bhList = new List<Coquanbanhanhs>();
+    protected Coquanbanhanhs bh = new Coquanbanhanhs();
+    protected Coquanbanhanhs bhxoa = new Coquanbanhanhs();
+    protected async override Task OnInitializedAsync()
+    {
+        bhList = await CQBH.GetAllCoquanbanhanh();
+    }
+    private async Task Save()
+    {
+        if (bh.CQBH_id == null)
+        {
+            await CQBH.AddCoquanbanhanh(bh);
+        }
+        else
+        {
+            await CQBH.UpdateCoquanbanhanh(bh);
+        }
+        await OnInitializedAsync();
+    }
+    protected async Task Load(string id)
+    {
+        bh = await CQBH.GetCoquanbanhanhData(id);
+    }
+    protected async Task Loadxoa(string id)
+    {
+        bhxoa = await CQBH.GetCoquanbanhanhData(id);
+    }
+    private async Task Delete(string id)
+    {
+        await CQBH.DeleteCoquanbanhanh(id);
+        await OnInitializedAsync();
+    }
+
+}

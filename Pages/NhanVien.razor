@@ -1,0 +1,233 @@
+@page "/Nhanvien"
+@using System.Threading.Tasks;
+@using System.Collections.Generic;
+@using QUANLIVANBAN.Data
+@using BlazorInputFile
+@inject NavigationManager NavigationManager
+@inject TaikhoanData TK
+@inject PhanQuyenData PQ
+@inject PhongbanData PHONGBAN
+@inject ChucvuData CHUCVU
+<div class="container">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="block">
+                <div class="header">
+                    <h2>DANH SÁCH NHÂN VIÊN</h2>
+                </div>
+                <div class="content">
+                    <table cellpadding="0" cellspacing="0" width="100%"
+                        class="table table-bordered table-striped sortable">
+                        <thead>
+                            <tr>
+                                <th>Họ Tên</th>
+                                <th>Chức Vụ</th>
+                                @* <th>Email</th> *@
+                                @* <th>Địa Chỉ</th> *@
+                                <th>Hình Ảnh</th>
+                                <th>Vai Trò</th>
+                                <th width="15%"></th>
+                            </tr>
+                        </thead>
+                        @foreach (var taikhoan in tkList)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@taikhoan.Taikhoanhoten</td>
+                                    <td>@taikhoan.Taikhoan_ChucVu</td>
+                                    @* <td>@taikhoan.Taikhoanemail</td> *@
+                                    @* <td>@taikhoan.Taikhoandiachi</td> *@
+                                    <td><img width="75" height="80" src="@taikhoan.Taikhoanhinhanh" /></td>
+                                    <td>@taikhoan.Taikhoan_Quyen</td>
+                                    <td>
+                                        <a class="widget-icon widget-icon-dark"
+                                        @onclick="(async () => await Load(taikhoan.TaikhoanId))"><span
+                                            class="icon-pencil"></span></a>
+                                        <a href="#modal_default_6" data-toggle="modal"  @onclick="(async () => await Loadxoa(taikhoan.TaikhoanId))"
+                                        class="widget-icon widget-icon-dark"><span class="icon-trash"></span></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <div class="modal" id="modal_default_6" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">TIẾP TỤC ĐỂ XÓA</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-success btn-clean" data-dismiss="modal"
+                                            @onclick="@(async () => {await Delete(tkxoa.TaikhoanId);})">Tiếp Tục</button>
+                                            <button type="button" class="btn btn-danger btn-clean"
+                                            data-dismiss="modal">Thoát</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="block">
+                <div class="header">
+                    <h2>Cập Nhật Nhân Viên</h2>
+                </div>
+                <div class="content controls">
+                    <div class="form-row">
+                        <div class="col-md-3">Họ Tên:</div>
+                        <div class="col-md-9">
+                            <input class="form-control" @bind="tk.Taikhoanhoten" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3">Mật Khẩu:</div>
+                        <div class="col-md-9">
+                            <input type="password" class="form-control" @bind="tk.TaikhoanpassWorld" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3">Phòng Ban:</div>
+                        <div class="col-md-9">
+                            <select class="select2" @bind="tk.Taikhoan_PhongBan" style="width: 100%;" tabindex="-1">
+                                @foreach (var taikhoan in pbList)
+                                {
+                                    <option value="@taikhoan.Phongban">@taikhoan.Phongban</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3">Chức Vụ:</div>
+                        <div class="col-md-9">
+                            <select class="select2" @bind="tk.Taikhoan_ChucVu" style="width: 100%;" tabindex="-1">
+                                @foreach (var taikhoan in cvList)
+                                {
+                                    <option value="@taikhoan.ChucVu">@taikhoan.ChucVu</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3">Vai Trò:</div>
+                        <div class="col-md-9">
+                            <select class="select2" @bind="tk.Taikhoan_Quyen" style="width: 100%;" tabindex="-1">
+                                @foreach (var taikhoan in quList)
+                                {
+                                    <option value="@taikhoan.PhanQuyen_Quyen">@taikhoan.PhanQuyen_Quyen</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3">Ngày Bắt Đầu:</div>
+                        <div class="col-md-9">
+                            <input type="Date" class="form-control" @bind="tk.Taikhoan_NgayBatDau" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3">Ngày Kết Thúc:</div>
+                        <div class="col-md-9">
+                            <input type="Date" class="form-control" @bind="tk.Taikhoan_NgayKetThuc" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3">Điện Thoại:</div>
+                        <div class="col-md-9">
+                            <input class="form-control" @bind="tk.Taikhoansdt" />
+                        </div>
+                    </div>
+
+
+
+
+
+                    @* <div class="form-row">
+                        <div class="col-md-3">Email:</div>
+                        <div class="col-md-9">
+                        <input class="form-control" @bind="tk.Taikhoanemail" />
+                        </div>
+                        </div> *@
+
+
+                    <div class="form-row">
+                        <div class="col-md-3">Địa Chỉ:</div>
+                        <div class="col-md-9">
+                            <textarea class="form-control" @bind="tk.Taikhoandiachi"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3">Hình Ảnh:</div>
+                        <div class="col-md-9">
+                            <InputFile OnChange="HandleFileSelected" multiple />
+                        </div>
+                    </div>
+
+
+                    <div class="form-row">
+                        <button type="button" class="btn btn-primary" @onclick="Save">LƯU NHÂN VIÊN</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@code {
+    protected List<Taikhoans> tkList = new List<Taikhoans>();
+    protected List<Phanquyens> quList = new List<Phanquyens>();
+    protected List<Phongbans> pbList = new List<Phongbans>();
+    protected List<Chucvus> cvList = new List<Chucvus>();
+    protected Taikhoans tk = new Taikhoans();
+    protected Taikhoans tkxoa = new Taikhoans();
+    IFileListEntry file; //note
+    private string url; //note
+    protected async override Task OnInitializedAsync()
+    {
+        tkList = await TK.GetAllTaikhoan();
+        quList = await PQ.GetAllPhanquyen();
+        pbList = await PHONGBAN.GetAllPhongban();
+        cvList = await CHUCVU.GetAllChucvu();
+    }
+    private async Task Save()
+    {
+        if (tk.TaikhoanId == null)
+        {
+            tk.Taikhoanhinhanh = url;
+            await TK.AddTaikhoan(tk);
+        }
+        else
+        {
+            //tk.Taikhoanhinhanh = url;
+            await TK.UpdateTaikhoan(tk);
+        }
+        await OnInitializedAsync();
+    }
+    protected async Task Load(string id)
+    {
+        tk = await TK.GetTaikhoanData(id);
+    }
+    protected async Task Loadxoa(string id)
+    {
+        tkxoa = await TK.GetTaikhoanData(id);
+    }
+    private async Task Delete(string id)
+    {
+        await TK.Deletetaikhoan(id);
+        await OnInitializedAsync();
+    }
+
+    async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        file = files.FirstOrDefault();
+        if (file != null)
+        {
+            url = await TK.UploadAsync(file);
+        }
+    }
+
+
+}

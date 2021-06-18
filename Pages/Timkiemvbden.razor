@@ -1,0 +1,100 @@
+@* @page "/Timkiemvbden"
+@using QUANLIVANBAN.Data
+@inject LoaivanbanData loaivb
+@inject CoquanbanhanhData CQBH
+@inject VanbandenData DEN
+<div class="row">
+    <div class="col-md-2">
+
+        <div class="block block-drop-shadow">
+            <div class="header">
+                <h2>Danh Mục</h2>
+            </div>
+            <div class="content content-transparent np">
+                <div class="list list-contacts">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span
+                                    class=" icon-file-alt"></span>
+                                Loại Văn Bản</a>
+                            <ul class="dropdown-menu">
+                                @foreach (var lvanban in loaiList)
+                                {
+                                    <li><a @onclick="(async () => await Load(lvanban.LoaiVanBan))">@lvanban.LoaiVanBan</a>
+                                    </li>
+                                }
+                            </ul>
+                            
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span
+                                        class=" icon-building"></span>
+                                    Nơi Ban Hành</a>
+                                <ul class="dropdown-menu">
+                                    @foreach (var banhanh in bhList)
+                                    {
+                                        <li><a @onclick="(async () => await Load_coquanbanhanh(banhanh.TenCoQuan))">@banhanh.TenCoQuan</a>
+                                        </li>
+                                    }
+                                </ul>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <div class="block block-transparent">
+            <div class="input-group">
+                <input type="text" @bind="noidungvanban" class="form-control" placeholder="Tìm Kiếm Theo Nội Dung" />
+                <div type="button" @onclick="Load_ndvanban" class="input-group-addon"><span class="icon-search"></span></div>
+            </div>
+
+        </div>
+        <div class="block block-transparent">
+            @foreach (var lvanban in vbdenlist)
+            {
+                <div class="content list list-default">
+
+                    <div class="list-item">
+                        <div class="list-title">@lvanban.VBDen_TieuDe</div>
+                        <div class="list-text">
+                            <p>@lvanban.VBDen_SoDen: @lvanban.VBDen_TrichYeu</p>
+                        </div>
+
+                        <div class="list-text">Trạng thái: <span class="label label-default">@lvanban.VBDen_NgayNhan</span> <span
+                            class="label label-default"><a href="@lvanban.VBDen_DinhKem">Đính Kèm</a></span> <span
+                            class="label label-default">@lvanban.VBDen_NguoiGui</span></div>
+                    </div>
+
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@code {
+    protected List<Loaivanbans> loaiList = new List<Loaivanbans>();
+    protected List<Coquanbanhanhs> bhList = new List<Coquanbanhanhs>();
+    protected List<Vanbandens> vbdenlist = new List<Vanbandens>();
+    protected Vanbandens vbden = new Vanbandens();
+    protected async override Task OnInitializedAsync()
+    {
+        loaiList = await loaivb.GetAllLoaivanban();
+        bhList = await CQBH.GetAllCoquanbanhanh();
+    }
+    protected async Task Load(string loaivb)
+    {
+        vbdenlist = await DEN.GetVanbandens_loaivb(loaivb);
+    }
+    protected async Task Load_coquanbanhanh(string cqbanhanh)
+    {
+        vbdenlist = await DEN.GetVanbandens_cqbanhanh(cqbanhanh);
+    }
+    private string noidungvanban;
+    protected async Task Load_ndvanban()
+    {
+        vbdenlist = await DEN.GetVanbandens_ndvanban(noidungvanban);
+    }
+
+} *@

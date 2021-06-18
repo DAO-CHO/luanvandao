@@ -1,0 +1,213 @@
+@layout LoginLayout
+@page "/"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor _httpContextAccessor
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
+@using QUANLIVANBAN.Data
+@using Google.Cloud.Firestore;
+@using System.Threading.Tasks;
+@using System.Security.Cryptography;
+@using System.Text;
+@using System.IO;
+@using QUANLIVANBAN.MyClass;
+@inject IJSRuntime ijs
+@inject TaikhoanData TK
+<div class="container">        
+
+        <div class="login-block">
+            <div class="block block-transparent">
+                <div class="content controls npt">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="icon-user"></span>
+                                </div>
+                                <input type="text" class="form-control" @bind="user.TaikhoanId" placeholder="Username"/>
+                            </div>
+                        </div>
+                    </div>    
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="icon-key"></span>
+                                </div>
+                                <input type="password" class="form-control" @bind="user.TaikhoanpassWorld" placeholder="Password"/>
+                            </div>
+                        </div>
+                    </div>                        
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <a href="signup" class="btn btn-default btn-block btn-clean">Đăng Kí</a>                                
+                        </div>
+                        <div class="col-md-6">
+                            <a @onclick="Load" class="btn btn-default btn-block btn-clean">Đăng Nhập</a>
+                        </div>
+                    </div>                      
+                    <div class="form-row">
+                        <div class="col-md-12 tac"><strong>Hoặc Sử Dụng</strong></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <a href="/Login" target="_top" class="btn btn-primary btn-block"><span class="icon-google-plus"></span> &nbsp; Google</a>
+                        </div>
+                    </div>
+                    @* <div class="form-row">
+                        <div class="col-md-12">
+                            <a href="/Login_Facebook" target="_top" class="btn btn-primary btn-block"><span class="icon-facebook"></span> &nbsp; Facebook</a>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                           <div class="fb-login-button" data-width="40px" data-height="150px" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="true"></div>
+                        </div>
+                    </div>  
+                     <div class="form-row">
+                        <div class="col-md-12">
+                           <div class="fb-login-button" data-width="40px" data-height="150px" data-button-type="continue_with" data-layout="default" data-auto-logout-link="true" data-use-continue-as="false"></div>
+                        </div>
+                    </div>         *@
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+@code {
+    private ClaimsPrincipal User;
+    IFileListEntry file;
+    private string url;
+    //private string quyen;
+    //private string GivenName;
+    //private string Surname;
+    //private string Avatar;
+    //private string Email;
+    //private string UserId;
+    protected Taikhoans tk = new Taikhoans();
+    protected List<Taikhoans> taikhoan = new List<Taikhoans>();
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        try
+        {
+            User = _httpContextAccessor.HttpContext.User;
+            var email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email);
+            var givenName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.GivenName);
+            var surname = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Surname);
+            var avatar = _httpContextAccessor.HttpContext.User.FindFirst("urn:google:image");
+            var userId =  User.FindFirstValue(ClaimTypes.NameIdentifier);  
+            if(email != null){
+                //tk = await TK.Getemail(email.Value);
+                taikhoan = await TK.getemail(email.Value);
+                if(taikhoan != null){
+                    @foreach (var ngui in taikhoan)
+                    { 
+                        await TK.Printvanban(ngui);
+                        NavigationManager.NavigateTo("/index"); 
+                    }   
+                }
+                if(taikhoan.Count()==0){
+                    User = _httpContextAccessor.HttpContext.User;
+                    tk.Taikhoanhinhanh = avatar.Value;
+                    url=tk.Taikhoanhinhanh;
+                    tk.Taikhoanemail = email.Value;
+                    tk.Taikhoanhoten = surname.Value +" "+ givenName.Value;
+                    await TK.AddTaikhoan_gg(tk);
+                    await TK.Printvanban(tk);
+                    NavigationManager.NavigateTo("/index");
+                }
+            }
+            else{
+                NavigationManager.NavigateTo("/");
+            }
+        }
+        catch { }
+    }
+
+    async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        file = files.FirstOrDefault();
+        if (file != null)
+        {
+            tk.Taikhoanhinhanh = await TK.UploadAsync(file);
+        }
+    }
+    protected Taikhoans user = new Taikhoans();  
+    protected  async Task Load(){
+        await Logining(user);
+    }
+
+    private static string GetHash(HashAlgorithm hashAlgorithm, string input)
+        {
+            byte[] data = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
+            var sBuilder = new StringBuilder();
+            for(int i = 0; i<data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
+        }
+    public async Task<Taikhoans> Logining(Taikhoans user)
+        { 
+            try  
+            { 
+                var path = Path.Combine(@"\QUANLIVANBAN\wwwroot\connFire.json");
+                FirestoreDb db = FireBaseConnect.connectFB(path); 
+                DocumentReference docRef = db.Collection("Taikhoan").Document(user.TaikhoanId);  
+                DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();  
+                if (snapshot.Exists)  
+                {  
+                    Taikhoans emp = snapshot.ConvertTo<Taikhoans>();  
+                    SHA256 sha256Hash = SHA256.Create();
+                    string hash = GetHash(sha256Hash, user.TaikhoanpassWorld);
+                    user.TaikhoanpassWorld=hash;
+                    if(user.TaikhoanpassWorld == emp.TaikhoanpassWorld)
+                    { 
+                        await TK.Printvanban(emp);
+                        NavigationManager.NavigateTo("/indexs");   
+                    }  
+                    
+                    return emp;  
+                }  
+                else  
+                {  
+                    return new Taikhoans();  
+                }  
+            }  
+            catch  
+            {  
+                throw;  
+            } 
+        }
+
+        public async Task<Taikhoans> GoogleLogin(Taikhoans user)
+        { 
+            try  
+            { 
+                NavigationManager.NavigateTo("/index"); 
+                var path = Path.Combine(@"\QUANLIVANBAN\wwwroot\connFire.json");
+                FirestoreDb db = FireBaseConnect.connectFB(path); 
+                DocumentReference docRef = db.Collection("Taikhoan").Document(user.Taikhoanemail);  
+                DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();  
+                if (snapshot.Exists)  
+                {  
+                    Taikhoans emp = snapshot.ConvertTo<Taikhoans>();   
+                    NavigationManager.NavigateTo("/index"); 
+                    return emp;  
+                }  
+                else  
+                {  
+                    return new Taikhoans();  
+                }  
+            }  
+            catch  
+            {  
+                throw;  
+            } 
+        }
+}

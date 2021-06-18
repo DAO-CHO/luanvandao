@@ -1,0 +1,90 @@
+@page "/indexs"
+@using QUANLIVANBAN.Data
+@inject TaikhoanData taikhoan
+
+    <div class="container"> 
+<div class="col-md-2">
+    <div class="block block-drop-shadow">
+        <div class="head bg-dot30 np tac">
+            <img src="@loginup.Taikhoanhinhanh" class="img-thumbnail img-circle" />
+        </div>
+        <div class="content controls">
+            <div class="form-row">
+                <div class="col-md-12">
+                    <div class="input-group file">
+                       <h2 style="text-align: center; margin-left: -15px;">@loginup.Taikhoanhoten - @loginup.Taikhoan_Quyen</h2>
+                       <h2 style="text-align: center; margin-left: -15px;">@loginup.TaikhoanId</h2>
+                       <h2 style="text-align: center; margin-left: -15px;">@loginup.Taikhoanemail</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-12">
+                    <a href="/Logout" target="_top" class="btn btn-primary btn-block">Đăng Xuất</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-10">
+
+    <div class="block  block-drop-shadow">
+
+        <div class="header">
+            <h2>Thông Tin Cá Nhân</h2>
+        </div>
+        <div class="content controls">
+            <div class="form-row">
+                <div class="col-md-3">Họ:</div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" value="@loginup.Taikhoanhoten" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-3">Tên:</div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" value="@loginup.Taikhoanhoten" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-3">Mail:</div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" value="@loginup.Taikhoanemail" />
+                </div>
+            </div>
+        </div>
+        <div class="content controls">
+            <div class="form-row">
+                <div class="col-md-3">Phòng Ban:</div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" value="@loginup.Taikhoan_PhongBan" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-3">Trường Đại học:</div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" value="@loginup.Taikhoan_ChucVu" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-3">Số Điện Thoại:</div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" value="@loginup.Taikhoansdt" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+</div>
+
+@code {
+    
+    protected Taikhoans loginup = new Taikhoans();
+     protected async override Task OnInitializedAsync()
+    {
+        loginup=await taikhoan.shownoidung();
+    }
+}

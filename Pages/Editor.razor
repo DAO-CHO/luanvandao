@@ -1,0 +1,179 @@
+@page "/Editor"
+@using Blazored.TextEditor
+<div class="row">
+    <div class="col-md-6">
+
+        <div class="block block-fill-white">
+            <BlazoredTextEditor @ref="@QuillHtml">
+                <ToolbarContent>
+                    <select class="ql-header">
+                        <option selected=""></option>
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                        <option value="4"></option>
+                        <option value="5"></option>
+                    </select>
+                    <span class="ql-formats">
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                        <button class="ql-strike"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <select class="ql-color"></select>
+                        <select class="ql-background"></select>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-link"></button>
+                    </span>
+                </ToolbarContent>
+                <EditorContent>
+                    <div class="col-md-6">
+                        <div class="block">
+                            <input name="Name" placeholder="TÊN DOANH NGHIỆP" />
+                        </div>
+                    </div>
+                </EditorContent>
+            </BlazoredTextEditor>
+        </div>
+
+    </div>
+    <div class="col-md-6">
+
+        <div class="block block-fill-white">
+            <div class="header">
+                <h2>Simple CLEditor</h2>
+            </div>
+            <div class="content np">
+                <textarea class="scle">
+                        <strong>Lorem ipsum dolor sit amet</strong>
+                        <p><strong>Consectetur adipiscing</strong> elit. Sed dictum dolor sem, quis pharetra dui ultricies vel. Cras non pulvinar tellus, vel bibendum magna. Morbi tellus nulla, cursus non nisi sed, porttitor dignissim erat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc facilisis commodo lectus. Vivamus vel tincidunt enim, non vulputate ipsum. Ut pellentesque consectetur arcu sit amet scelerisque. Fusce commodo leo eros, ut eleifend massa congue at.</p>
+                        <p>Nam a nisi et nisi tristique lacinia non sit amet orci. <strong>Duis blandit leo</strong> odio, eu varius nulla fringilla adipiscing. Praesent posuere blandit diam, sit amet suscipit justo consequat sed. Duis cursus volutpat ante at convallis. Integer posuere a enim eget imperdiet. Nulla consequat dui quis purus molestie fermentum. Donec faucibus sapien eu nisl placerat auctor. Pellentesque quis justo lobortis, tempor sapien vitae, dictum orci.</p>
+                        </textarea>
+            </div>
+            <div class="footer">
+                <div class="pull-right">
+                    <button class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<BlazoredTextEditor @ref="@QuillHtml">
+    <ToolbarContent>
+        <select class="ql-header">
+            <option selected=""></option>
+            <option value="1"></option>
+            <option value="2"></option>
+            <option value="3"></option>
+            <option value="4"></option>
+            <option value="5"></option>
+        </select>
+        <span class="ql-formats">
+            <button class="ql-bold"></button>
+            <button class="ql-italic"></button>
+            <button class="ql-underline"></button>
+            <button class="ql-strike"></button>
+        </span>
+        <span class="ql-formats">
+            <select class="ql-color"></select>
+            <select class="ql-background"></select>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-list" value="ordered"></button>
+            <button class="ql-list" value="bullet"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-link"></button>
+        </span>
+    </ToolbarContent>
+    <EditorContent>
+        <div class="col-md-6">
+            <div class="block">
+                <input name="Name" placeholder="TÊN DOANH NGHIỆP" />
+            </div>
+        </div>
+    </EditorContent>
+</BlazoredTextEditor>
+
+<br />
+<button class="btn btn-primary" @onclick="GetHTML">Get HTML</button>
+<button class="btn btn-primary" @onclick="SetHTML">Set HTML</button>
+<br />
+<div>
+    <br />
+    @((MarkupString)QuillHTMLContent)
+    @QuillHTMLContent
+</div>
+<br />
+<div class="row">
+    <div class="col-md-6">
+
+        <div class="block block-fill-white">
+            <div class="header">
+                <h2>Default CLEditor</h2>
+            </div>
+            <div class="content np">
+                <textarea class="cle">
+                        <h2>Lorem ipsum dolor sit amet</h2>
+                        <p><strong>Consectetur adipiscing</strong> elit. Sed dictum dolor sem, quis pharetra dui ultricies vel. Cras non pulvinar tellus, vel bibendum magna. Morbi tellus nulla, cursus non nisi sed, porttitor dignissim erat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc facilisis commodo lectus. Vivamus vel tincidunt enim, non vulputate ipsum. Ut pellentesque consectetur arcu sit amet scelerisque. Fusce commodo leo eros, ut eleifend massa congue at.</p>
+                        <p>Nam a nisi et nisi tristique lacinia non sit amet orci. <strong>Duis blandit leo</strong> odio, eu varius nulla fringilla adipiscing. Praesent posuere blandit diam, sit amet suscipit justo consequat sed. Duis cursus volutpat ante at convallis. Integer posuere a enim eget imperdiet. Nulla consequat dui quis purus molestie fermentum. Donec faucibus sapien eu nisl placerat auctor. Pellentesque quis justo lobortis, tempor sapien vitae, dictum orci.</p>
+                        </textarea>
+            </div>
+            <div class="footer">
+                <div class="pull-right">
+                    <button class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-6">
+
+        <div class="block block-fill-white">
+            <div class="header">
+                <h2>Simple CLEditor</h2>
+            </div>
+            <div class="content np">
+                <textarea class="scle">
+                        <strong>Lorem ipsum dolor sit amet</strong>
+                        <p><strong>Consectetur adipiscing</strong> elit. Sed dictum dolor sem, quis pharetra dui ultricies vel. Cras non pulvinar tellus, vel bibendum magna. Morbi tellus nulla, cursus non nisi sed, porttitor dignissim erat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc facilisis commodo lectus. Vivamus vel tincidunt enim, non vulputate ipsum. Ut pellentesque consectetur arcu sit amet scelerisque. Fusce commodo leo eros, ut eleifend massa congue at.</p>
+                        <p>Nam a nisi et nisi tristique lacinia non sit amet orci. <strong>Duis blandit leo</strong> odio, eu varius nulla fringilla adipiscing. Praesent posuere blandit diam, sit amet suscipit justo consequat sed. Duis cursus volutpat ante at convallis. Integer posuere a enim eget imperdiet. Nulla consequat dui quis purus molestie fermentum. Donec faucibus sapien eu nisl placerat auctor. Pellentesque quis justo lobortis, tempor sapien vitae, dictum orci.</p>
+                        </textarea>
+            </div>
+            <div class="footer">
+                <div class="pull-right">
+                    <button class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    BlazoredTextEditor QuillHtml;
+    string QuillHTMLContent;
+
+    public async void GetHTML()
+    {
+        QuillHTMLContent = await this.QuillHtml.GetHTML();
+        StateHasChanged();
+    }
+
+    public async void SetHTML()
+    {
+        string QuillContent =
+            @"<a href='http://BlazorHelpWebsite.com/'>" +
+            "<img src='images/BlazorHelpWebsite.gif' /></a>";
+
+        await this.QuillHtml.LoadHTMLContent(QuillContent);
+        StateHasChanged();
+    }
+}

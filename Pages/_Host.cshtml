@@ -1,0 +1,95 @@
+﻿@page "/"
+@namespace QUANLIVANBAN.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using EmbeddedBlazorContent;
+<!DOCTYPE html>
+<html lang="en">
+@Html.EmbeddedBlazorContent()
+
+<head>
+    <title>QUẢN LÍ VĂN BẢN</title>
+
+    @* <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> *@
+
+    <meta http-equiv="Content-Type" name="google-signin-client_id"
+        content="31193708479-996k6j9udamr4bdi08difdvqrm9acdv4.apps.googleusercontent.com">
+
+    <link rel="icon" type="image/ico" href="~/Template/favicon.ico" />
+
+    <link href="~/Template/css/stylesheets.css" rel="stylesheet" type="text/css" />
+
+
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+    <script type='text/javascript' src='~/Template/js/plugins/jquery/jquery.min.js'></script>
+    <script type='text/javascript' src='~/Template/js/plugins/jquery/jquery-ui.min.js'></script>
+    <script type='text/javascript' src='~/Template/js/plugins/jquery/jquery-migrate.min.js'></script>
+    <script type='text/javascript' src='~/Template/js/plugins/jquery/globalize.js'></script>
+    <script type='text/javascript' src='~/Template/js/plugins/bootstrap/bootstrap.min.js'></script>
+
+    <script type='text/javascript' src='~/Template/js/plugins/uniform/jquery.uniform.min.js'></script>
+    <script type='text/javascript' src='~/Template/js/plugins/datatables/jquery.dataTables.min.js'></script>
+
+
+    <script type='text/javascript' src='~/Template/js/plugins.js'></script>
+    <script type='text/javascript' src='~/Template/js/actions.js'></script>
+    <script type='text/javascript' src='~/Template/js/settings.js'></script>
+
+    <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="//cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
+
+    @* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script> *@
+
+</head>
+
+<body class="wall-num14">
+    <div class="container theme-white">
+        <app>
+            <component type="typeof(App)" render-mode="ServerPrerendered" />
+
+        </app>
+    </div>
+    <script src="_framework/blazor.server.js"></script>
+    <script src="_content/BlazorInputFile/inputfile.js"></script>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="_content/Blazored.TextEditor/quill-blot-formatter.min.js"></script>
+    <script src="_content/Blazored.TextEditor/Blazored-BlazorQuill.js"></script>
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous"
+        src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v10.0&appId=161620089063500&autoLogAppEvents=1"
+        nonce="eOiSeG3C"></script>
+    <script>
+        function printDocument() {
+            //var divToPrint = document.getElementById('divToPrint').innerHTML;
+            //window.print();
+            //var popupWin = window.open('', '_blank', 'width=auto,height=auto');
+            //popupWin.document.open();
+            //popupWin.document.write(divToPrint);
+            //popupWin.print();
+            //popupWin.document.close();
+            var printContents = document.getElementById('divToPrint').innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            setTimeout("closePrintView()", 3000);
+            window.onafterprint = closePrintView();
+            function closePrintView() {
+                document.location.href = "/";
+            }
+        }
+    </script>
+    <script>
+        function printDiv(divName) {
+            var printContents = document.getElementById(divName).innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+        }
+    </script>
+</body>
+
+</html>

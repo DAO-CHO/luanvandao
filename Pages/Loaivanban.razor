@@ -1,0 +1,131 @@
+@page "/Loaivanban"
+@using System.Threading.Tasks;
+@using System.Collections.Generic;
+@using QUANLIVANBAN.Data
+@inject NavigationManager NavigationManager
+@inject LoaivanbanData loaivb
+<div class="container">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="block">
+                <div class="header">
+                    <h2>DANH SÁCH LOẠI VĂN BẢN</h2>
+                </div>
+                <div class="content">
+                    <table cellpadding="0" cellspacing="0" width="100%"
+                        class="table table-bordered table-striped sortable">
+                        <thead>
+                            <tr>
+                                <th width="27%">Loại Văn Bản</th>
+                                <th width="60%">Ghi Chú</th>
+                                <th width="13%"></th>
+                            </tr>
+                        </thead>
+                        @foreach (var loaivb in loaiList)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@loaivb.LoaiVanBan</td>
+                                    <td>@loaivb.LoaiVB_Ghichu</td>
+                                    <td>
+                                        <a class="widget-icon widget-icon-dark"
+                                        @onclick="(async () => await Load(loaivb.LoaiVB_Id))"><span
+                                            class="icon-pencil"></span></a>
+                                        <a href="#modal_default_6" data-toggle="modal"  @onclick="(async () => await Loadxoa(loaivb.LoaiVB_Id))"
+                                        class="widget-icon widget-icon-dark"><span class="icon-trash"></span></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <div class="modal" id="modal_default_6" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">TIẾP TỤC ĐỂ XÓA</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-success btn-clean" data-dismiss="modal"
+                                            @onclick="@(async () => {await Delete(loaixoa.LoaiVB_Id);})">Tiếp Tục</button>
+                                            <button type="button" class="btn btn-danger btn-clean"
+                                            data-dismiss="modal">Thoát</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="block">
+                <div class="header">
+                    <h2>Cập Nhật Loại Văn Bản</h2>
+                </div>
+                <div class="content controls">
+                    <EditForm Model="@loai">
+                        <DataAnnotationsValidator />
+                        <div class="form-row">
+                            <div class="col-md-2">Văn Bản:</div>
+                            <div class="col-md-10">
+                                <InputText type="text" id="LoaiVanBan" class="form-control"
+                                    @bind-Value="loai.LoaiVanBan" />
+                                <ValidationMessage For="@(() => loai.LoaiVanBan)" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-2">Ghi Chú:</div>
+                            <div class="col-md-10">
+                                <InputTextArea aria-rowcount="3" class="form-control" id="LoaiVB_Ghichu"
+                                    @bind-Value="loai.LoaiVB_Ghichu"></InputTextArea>
+                                <ValidationMessage For="@(() => loai.LoaiVB_Ghichu)" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <button type="button" class="btn btn-primary" @onclick="Save">LƯU LOẠI VĂN BẢN</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+@code {
+    protected List<Loaivanbans> loaiList = new List<Loaivanbans>();
+    protected Loaivanbans loai = new Loaivanbans();
+     protected Loaivanbans loaixoa = new Loaivanbans();
+    protected async override Task OnInitializedAsync()
+    {
+        loaiList = await loaivb.GetAllLoaivanban();
+    }
+    private async Task Save()
+    {
+        if (loai.LoaiVB_Id == null)
+        {
+            await loaivb.AddLoaivanban(loai);
+        }
+        else
+        {
+            await loaivb.UpdateLoaivanban(loai);
+        }
+        await OnInitializedAsync();
+    }
+    protected async Task Load(string id)
+    {
+        loai = await loaivb.GetLoaivanbanData(id);
+    }
+    protected async Task Loadxoa(string id)
+    {
+        loaixoa = await loaivb.GetLoaivanbanData(id);
+    }
+    private async Task Delete(string id)
+    {
+        await loaivb.DeleteLoaivanban(id);
+        await OnInitializedAsync();
+    }
+
+}

@@ -1,0 +1,131 @@
+@page "/Phanquyen"
+@using System.Threading.Tasks;
+@using System.Collections.Generic;
+@using QUANLIVANBAN.Data
+@inject NavigationManager NavigationManager
+@inject PhanQuyenData PHANQUYEN 
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="block">
+                <div class="header">
+                    <h2>Danh Sách Quyền Truy Cập</h2>
+                </div>
+                <div class="content">
+                    <table cellpadding="0" cellspacing="0" width="100%" class="table table-bordered table-striped sortable">
+                        <thead>
+                            <tr>
+                                <th width="25%">Quyền Truy Cập</th>
+                                <th width="60%">Ghi Chú</th>
+                                <th width="15%"></th>
+                            </tr>
+                        </thead>
+                        @foreach (var quyen in quList)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@quyen.PhanQuyen_Quyen</td>
+                                    <td>@quyen.PhanQuyen_Ghichu</td>
+                                    
+                                    <td>
+                                        <a class="widget-icon widget-icon-dark"
+                                            @onclick="(async () => await Load(quyen.PhanQuyen_Id))"><span
+                                                class="icon-pencil"></span></a>
+                                        <a href="#modal_default_6" data-toggle="modal"  @onclick="(async () => await Loadxoa(quyen.PhanQuyen_Id))"
+                                            class="widget-icon widget-icon-dark"><span class="icon-trash"></span></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <div class="modal" id="modal_default_6" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">TIẾP TỤC ĐỂ XÓA</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-success btn-clean" data-dismiss="modal"
+                                            @onclick="@(async () => {await Delete(quxoa.PhanQuyen_Id);})">Tiếp Tục</button>
+                                            <button type="button" class="btn btn-danger btn-clean"
+                                            data-dismiss="modal">Thoát</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="block">
+                <div class="header">
+                    <h2>Cập Nhật Quyền Truy Cập</h2>
+                </div>
+                <div class="content controls">
+                    <EditForm Model="@qu">
+                    <DataAnnotationsValidator />
+                    <div class="form-row">
+                        <div class="col-md-3">Quyền Truy Cập:</div>
+                        <div class="col-md-9">
+                            <InputText type="text" id="PhanQuyen_Quyen" class="form-control" @bind-Value="qu.PhanQuyen_Quyen"/>
+                            <ValidationMessage For="@(() => qu.PhanQuyen_Quyen)" />
+                        </div>
+                    </div>
+
+                     <div class="form-row">
+                        <div class="col-md-3">Ghi Chú:</div>
+                        <div class="col-md-9">
+                            <InputTextArea type="text" id="PhanQuyen_Ghichu" class="form-control" @bind-Value="qu.PhanQuyen_Ghichu"></InputTextArea>
+                            <ValidationMessage For="@(() => qu.PhanQuyen_Ghichu)" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-row">
+                        <button type="button" class="btn btn-primary" @onclick="Save">LƯU QUYỀN TRUY CẬP</button>
+                    </div>
+                    </EditForm>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@code {
+    protected List<Phanquyens> quList = new List<Phanquyens>();
+    protected Phanquyens qu = new Phanquyens();
+    protected Phanquyens quxoa = new Phanquyens();
+    protected async override Task OnInitializedAsync()
+    {
+        quList = await PHANQUYEN.GetAllPhanquyen();
+    }
+    private async Task Save()
+    {
+        if (qu.PhanQuyen_Id == null)
+        {
+            await PHANQUYEN.AddPhanquyen(qu);
+        }
+        else
+        {
+            await PHANQUYEN.UpdatePhanquyen(qu);
+        }
+        await OnInitializedAsync();
+    }
+    protected async Task Load(string id)
+    {
+        qu = await PHANQUYEN.GetPhanquyenData(id);
+    }
+    protected async Task Loadxoa(string id)
+    {
+        quxoa = await PHANQUYEN.GetPhanquyenData(id);
+    }
+    private async Task Delete(string id)
+    {
+        await PHANQUYEN.DeletePhanquyen(id);
+        await OnInitializedAsync();
+    }
+
+}

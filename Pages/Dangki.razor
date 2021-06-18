@@ -1,0 +1,111 @@
+@layout LoginLayout
+@page "/signup"
+@using QUANLIVANBAN.Data
+@using System.Threading.Tasks
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
+@inject TaikhoanData TK
+<div class="container">
+
+    <div class="registration-block">
+        <div class="block block-transparent">
+            <div class="head tac">
+                <img src="@url" width="75" height="80" style="border-radius: 50px" />
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <InputFile OnChange="HandleFileSelected" multiple />
+                    </div>
+                </div>
+            </div>
+            <div class="content controls npt">
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <span class="icon-user"></span>
+                            </div>
+                            <input type="text" class="form-control" @bind="tk.Taikhoanhoten" placeholder="Họ Tên" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <span class="icon-envelope"></span>
+                            </div>
+                            <input type="text" class="form-control" @bind="tk.Taikhoanemail" placeholder="E-mail" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <span class="icon-globe"></span>
+                            </div>
+                            <input type="text" class="form-control" @bind="tk.Taikhoansdt"
+                                placeholder="Số Điện Thoại" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <span class="icon-globe"></span>
+                            </div>
+                            <input type="text" class="form-control" @bind="tk.Taikhoandiachi" placeholder="Địa Chỉ" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <span class="icon-lock"></span>
+                            </div>
+                            <input type="password" class="form-control" @bind="tk.TaikhoanpassWorld"
+                                placeholder="Password" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <span class="icon-unlock-alt"></span>
+                            </div>
+                            <input type="password" class="form-control" @bind="tk.TaikhoanpassWorld"
+                                placeholder="Re-Password" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <a @onclick="Save" class="btn btn-primary btn-block">Đăng Kí</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    IFileListEntry file;
+    private string url;
+    protected Taikhoans tk = new Taikhoans();
+    protected async Task Save()
+    {
+        tk.Taikhoanhinhanh = url;
+        tk.Taikhoan_Quyen = "User";
+        await TK.AddTaikhoan(tk);
+        await TK.Printvanban(tk);
+        NavigationManager.NavigateTo("/indexs");
+    }
+
+    async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        file = files.FirstOrDefault();
+        if (file != null)
+        {
+            url = await TK.UploadAsync(file);
+        }
+    }
+}

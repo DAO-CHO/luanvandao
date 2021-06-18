@@ -1,0 +1,238 @@
+@page "/Vanbandi"
+@using System.Threading.Tasks;
+@using System.Collections.Generic;
+@using QUANLIVANBAN.Data
+@using BlazorInputFile
+@using System.Text;
+@using iTextSharp.text.pdf;
+@using iTextSharp.text.pdf.parser;
+@using System.Linq;
+@inject VanbandiData DI
+@inject LoaivanbanData loaivb
+@inject TaikhoanData TK
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="block">
+                <div class="header">
+                    <h2>DANH SÁCH VĂN BẢN ĐI</h2>
+                </div>
+                <div class="content">
+                    <table cellpadding="0" cellspacing="0" width="100%"
+                        class="table table-bordered table-striped sortable">
+                        <thead>
+                            <tr>
+                                <th>Tiêu Đề</th>
+                                <th>Người Gửi</th>
+                                <th>Số Đi</th>
+                                <th>Nơi Đến</th>
+                                <th>Ngày Gửi</th>
+                                <th width="10%">Đính Kèm</th>
+                                <th width="12%"></th>
+                            </tr>
+                        </thead>
+                        @foreach (var di in diList)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@di.VBDi_TieuDe</td>
+                                    <td>@di.VBDi_NguoiGui</td>
+                                    <td>@di.VBDi_SoDi</td>
+                                    <td>@di.VBDi_NoiNhan</td>
+                                    <td>@di.VBDi_NgayGui</td>
+                                    <td><a href="@di.Dinhkem">Đính Kèm</a></td>
+                                    <td>
+                                        <a class="widget-icon widget-icon-dark"
+                                            @onclick="(async () => await Load(di.VBDi_id))"><span
+                                                class="icon-pencil"></span></a>
+                                        <a href="#modal_default_6" data-toggle="modal"  @onclick="(async () => await Loadxoa(di.VBDi_id))"
+                                            class="widget-icon widget-icon-dark"><span class="icon-trash"></span></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <div class="modal" id="modal_default_6" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">TIẾP TỤC ĐỂ XÓA</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-success btn-clean" data-dismiss="modal"
+                                            @onclick="@(async () => {await Delete(dixoa.VBDi_id);})">Tiếp Tục</button>
+                                            <button type="button" class="btn btn-danger btn-clean"
+                                            data-dismiss="modal">Thoát</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="block ">
+                <div class="header">
+                    <h2>Cập Nhật Văn Bản Đi</h2>
+                </div>
+                <div class="content controls">
+                    <div class="form-row">
+                        <div class="col-md-3">Tiêu Đề:</div>
+                        <div class="col-md-9">
+                            <select class="select2" @bind="di.VBDi_TieuDe" style="width: 100%;" tabindex="-1">
+                                @foreach (var lvanban in loaiList)
+                                {
+                                    <option value="@lvanban.LoaiVanBan">@lvanban.LoaiVanBan</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Ngày Gửi:</div>
+                        <div class="col-md-9">
+                            <input type="Date" class="form-control" @bind="di.VBDi_NgayGui" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-3">Người Gửi:</div>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" readonly value="@loginup.Taikhoanhoten" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="col-md-3">Nơi Nhận:</div>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" @bind="di.VBDi_NoiNhan" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Số Đi:</div>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" @bind="di.VBDi_SoDi" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Trích Yếu:</div>
+                        <div class="col-md-9">
+                            @* <input type="text" class="form-control" @bind="di.VBDi_TrichYeu" /> *@
+                            <textarea class="form-control" @bind="di.VBDi_TrichYeu"></textarea>
+                        </div>
+                    </div>
+
+
+                    <div class="form-row">
+                        <div class="col-md-3">Số Trang:</div>
+                        <div class="col-md-9">
+                            <input type="number" disabled class="form-control" @bind="di.VBDi_SoTrang" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Đính Kèm:</div>
+                        <div class="col-md-9">
+                            <InputFile OnChange="HandleFileSelected" multiple />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3" style="height: 25px; width: revert; margin-top: -2px;"><input type="checkbox" class="form-control" @bind="boolvalue"/></div>
+                            <div class="col-md-9">
+                                <label>Đồng ý để mọi người điều thấy văn bản?</label>                       
+                            </div>
+                        </div>
+
+                    <div class="form-row">
+                        <button type="button" class="btn btn-primary" @onclick="Save">LƯU VĂN BẢN</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@code {
+    protected List<Vanbandis> diList = new List<Vanbandis>();
+    protected List<Loaivanbans> loaiList = new List<Loaivanbans>();
+    protected List<Taikhoans> tkList = new List<Taikhoans>();
+    protected Vanbandis di = new Vanbandis();
+    protected Vanbandis dixoa = new Vanbandis();
+    public bool boolvalue { get; set; }
+    protected Taikhoans loginup = new Taikhoans();
+    protected async override Task OnInitializedAsync()
+    {
+        loginup=await TK.shownoidung();
+        //diList = await DI.GetAllVanbandi();
+        diList = await DI.GetVanbandis_PB(loginup.Taikhoan_PhongBan);
+        loaiList = await loaivb.GetAllLoaivanban();
+        tkList = await TK.GetAllTaikhoan();
+    }
+
+    private async Task Save()
+    {
+        if (boolvalue)
+        {
+            di.VBDi_public = "true";
+        }
+        else
+        {
+            di.VBDi_public = "false";
+        }
+        boolvalue = !boolvalue;
+        if (di.VBDi_id == null)
+        {
+            di.VBDi_phongban=loginup.Taikhoan_PhongBan;
+            di.VBDi_NguoiGui=loginup.Taikhoanhoten;
+            di.Dinhkem = url;
+            await DI.AddVanbandi(di);
+        }
+        else
+        {
+            //di.VBDi_NguoiGui=loginup.Taikhoanhoten;
+            await DI.UpdateVanbandi(di);
+        }
+        await OnInitializedAsync();
+    }
+    protected async Task Load(string id)
+    {
+        di = await DI.GetVanbandiData(id);
+    }
+    protected async Task Loadxoa(string id)
+    {
+        dixoa = await DI.GetVanbandiData(id);
+    }
+    private async Task Delete(string id)
+    {
+        await DI.DeleteVanbandi(id);
+        await OnInitializedAsync();
+    }
+    IFileListEntry file;
+    private string url;
+    private string scanstring;
+    async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        file = files.FirstOrDefault();
+        if (file != null)
+        {
+            url = await DI.UploadAsync(file);
+        }
+        using (PdfReader reader = new PdfReader(url))
+        {
+            for (int y = 1; y <= reader.NumberOfPages; y++)
+            {
+                LocationTextExtractionStrategy strategy = new LocationTextExtractionStrategy();
+                string line = PdfTextExtractor.GetTextFromPage(reader, y, new SimpleTextExtractionStrategy());
+                line = Encoding.UTF8.GetString(Encoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(line)));
+                scanstring += line;
+                di.VBDi_NoiDung = scanstring;
+                di.VBDi_SoTrang = reader.NumberOfPages.ToString();
+            }
+        }
+    }
+}

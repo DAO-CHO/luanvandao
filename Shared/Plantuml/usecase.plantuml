@@ -1,0 +1,61 @@
+@startuml
+left to right direction
+actor "Admin" as ad
+actor "Người Dùng" as ndung
+package "Mô Hình UseCase Tổng Quan Hệ Thống"{
+ usecase "Đăng Nhập" as dnhap
+ usecase "Văn bản Điện Tử" as dtu
+ usecase "Tìm Kiếm Văn Bản" as timkiem
+ usecase "Tạo Lập Văn Bản" as tao
+ usecase "Quản Lý Văn Bản" as vban
+ usecase "Quản Lý Cơ Quan" as cq
+ usecase "Quản Lý Người Dùng" as nd
+ usecase "Văn Bản Đến" as đen
+ usecase "Văn Bản Đi" as đi
+ usecase "Quản Lý Văn Bản Đến" as qlden
+ usecase "Quản Lý Văn Bản Đi" as qldi
+ usecase "Quản Lý Nơi Ban Hành" as nbh
+ usecase "Quản Lý Loại Văn Bản" as loai
+ usecase "Quản Lý Phòng Ban" as pb
+ usecase "Quản Lý Cơ quan" as coquan
+ usecase "Quản Lý Chức Vụ" as cv
+ usecase "Quản Lý Quyền Truy Cập" as quyen
+ usecase "Quản Lý Nhân Viên" as nvien
+ usecase "Tạo Mới Văn Bản" as moi
+ usecase "Xuất File" as xuat
+}
+ad -- dnhap
+ndung -- dnhap
+ad --dtu
+ndung -- dtu
+dtu --timkiem
+dtu --tao
+dtu --vban
+dtu--cq
+dtu--nd
+timkiem--đen
+timkiem--đi
+tao--moi
+tao--xuat
+vban--qlden
+vban--qldi
+vban--nbh
+vban--loai
+cq--pb
+cq -- coquan
+nd--cv
+nd--quyen
+nd--nvien
+
+qlden ..> dnhap: include
+qldi ..>dnhap:include
+moi ..>dnhap:include
+xuat ..>dnhap:include
+nbh ..>dnhap:include
+loai ..>dnhap:include
+pb ..>dnhap:include
+coquan ..>dnhap:include
+cv ..>dnhap:include
+quyen ..>dnhap:include
+nvien ...dnhap:include
+@enduml

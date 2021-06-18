@@ -1,0 +1,444 @@
+﻿@page "/Counter"
+@using Blazored.TextEditor
+@using QUANLIVANBAN.Data
+@inject VanbandiData DI
+@inject VanbandenData DEN
+@inject LoaivanbanData loaivb
+@inject CoquanbanhanhData CQBH
+@inject TaikhoanData TK
+@inject InVanBanData invanban
+@inject NavigationManager Navigate
+@inject IJSRuntime ijs
+<div class="container">
+    <div class="row">
+        
+        <div class="col-md-5">
+            <div class="block">
+                <ul class="nav nav-tabs">
+                    <li class=""><a @onclick="TieuDe" href="#tab5" data-toggle="tab" aria-expanded="true">TIÊU ĐỀ</a></li>
+                    <li class=""><a @onclick="ThucHien" href="#tab6" data-toggle="tab" aria-expanded="false">THỰC HIỆN</a></li>
+                    <li class="active"><a href="#tab7" data-toggle="tab" aria-expanded="false">NỘI DUNG</a></li>
+                    <li class=""><a @onclick="NguoiKy" href="#tab8" data-toggle="tab" aria-expanded="false">BAN HÀNH</a></li>
+                </ul>
+                <div class="content content-transparent tab-content">
+                    <div class="tab-pane" id="tab5">
+                        <div class="block block-fill-white">
+                            <div class="content controls">
+                                <div class="form-row">
+                                    <div class="col-md-3">Đơn Vị 1:</div>
+                                    <div class="col-md-9">
+                                        <input type="text" @bind="invb.TLVB_DonVi1" name="donvi1" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-3">Đơn Vị 2:</div>
+                                    <div class="col-md-9">
+                                        <input type="text" @bind="invb.TLVB_DonVi2" name="donvi2" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-3">Quyết Định Số:</div>
+                                    <div class="col-md-9">
+                                        <input type="text" @bind="invb.TLVB_QuyetDinhSo" name="quyetdinhso"
+                                            class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-3">Thành Phố:</div>
+                                    <div class="col-md-9">
+                                        <select class="select2" @bind="invb.TLVB_ThanhPho" name="thanhpho" style="width: 100%;"
+                                            tabindex="-1">
+                                            <option value="An Giang">An Giang</option>
+                                            <option value="Bà Rịa – Vũng Tàu">Bà Rịa – Vũng Tàu</option>
+                                            <option value="Bắc Giang">Bắc Giang</option>
+                                            <option value="Bắc Kạn">Bắc Kạn</option>
+                                            <option value="Bạc Liêu">Bạc Liêu</option>
+                                            <option value="Bắc Ninh">Bắc Ninh</option>
+                                            <option value="Bến Tre">Bến Tre</option>
+                                            <option value="Bình Định">Bình Định</option>
+                                            <option value="Bình Dương">Bình Dương</option>
+                                            <option value="Bình Phước">Bình Phước</option>
+                                            <option value="Bình Thuận">Bình Thuận</option>
+                                            <option value="Cà Mau">Cà Mau</option>
+                                            <option value="Cần Thơ">Cần Thơ</option>
+                                            <option value="Cao Bằng ">Cao Bằng</option>
+                                            <option value="Đà Nẵng">Đà Nẵng</option>
+                                            <option value="Đắk Lắk">Đắk Lắk</option>
+                                            <option value="Đắk Nông">Đắk Nông</option>
+                                            <option value="Điện Biên">Điện Biên</option>
+                                            <option value="Đồng Nai">Đồng Nai</option>
+                                            <option value="Đồng Tháp">Đồng Tháp</option>
+                                            <option value="Gia Lai">Gia Lai</option>
+                                            <option value="Hà Giang">Hà Giang</option>
+                                            <option value="Hà Nam">Hà Nam</option>
+                                            <option value="Hà Nội ">Hà Nội</option>
+                                            <option value="Hà Tĩnh">Hà Tĩnh</option>
+                                            <option value="Hải Dương">Hải Dương</option>
+                                            <option value="Hải Phòng">Hải Phòng</option>
+                                            <option value="Hậu Giang">Hậu Giang</option>
+                                            <option value="Hòa Bình">Hòa Bình</option>
+                                            <option value="Hưng Yên">Hưng Yên</option>
+                                            <option value="Khánh Hòa">Khánh Hòa</option>
+                                            <option value="Kiên Giang">Kiên Giang</option>
+                                            <option value="Kon Tum">Kon Tum</option>
+                                            <option value="Lai Châu">Lai Châu</option>
+                                            <option value="Lâm Đồng">Lâm Đồng</option>
+                                            <option value="Lạng Sơn">Lạng Sơn</option>
+                                            <option value="Lào Cai">Lào Cai</option>
+                                            <option value="Long An">Long An</option>
+                                            <option value="Nam Định">Nam Định</option>
+                                            <option value="Nghệ An">Nghệ An</option>
+                                            <option value="Ninh Bình">Ninh Bình</option>
+                                            <option value="Ninh Thuận">Ninh Thuận</option>
+                                            <option value="Phú Thọ">Phú Thọ</option>
+                                            <option value="Phú Yên">Phú Yên</option>
+                                            <option value="Quảng Bình">Quảng Bình</option>
+                                            <option value="Quảng Nam">Quảng Nam</option>
+                                            <option value="Quảng Ngãi">Quảng Ngãi</option>
+                                            <option value="Quảng Ninh">Quảng Ninh</option>
+                                            <option value="Quảng Trị">Quảng Trị</option>
+                                            <option value="Sóc Trăng">Sóc Trăng</option>
+                                            <option value="Sơn La">Sơn La</option>
+                                            <option value="Tây Ninh">Tây Ninh</option>
+                                            <option value="Thái Bình">Thái Bình</option>
+                                            <option value="Thái Nguyên">Thái Nguyên</option>
+                                            <option value="Thanh Hóa">Thanh Hóa</option>
+                                            <option value="Thừa Thiên Huế">Thừa Thiên Huế</option>
+                                            <option value="Tiền Giang">Tiền Giang</option>
+                                            <option value="Thành phố Hồ Chí Minh">Thành phố Hồ Chí Minh</option>
+                                            <option value="Trà Vinh">Trà Vinh</option>
+                                            <option value="Tuyên Quang">Tuyên Quang</option>
+                                            <option value="Vĩnh Long">Vĩnh Long</option>
+                                            <option value="Vĩnh Phúc">Vĩnh Phúc</option>
+                                            <option value="Yên Bái">Yên Bái</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-3">Tiêu Đề:</div>
+                                    <div class="col-md-9">
+                                        <select class="select2" @bind="invb.TLVB_TieuDe" name="tieude" style="width: 100%;"
+                                            tabindex="-1">
+                                            @foreach (var lvb in loaiList)
+                                                {
+                                                    <option value="@lvb.LoaiVanBan">@lvb.LoaiVanBan</option>
+                                                }
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-3">Tiêu Đề Phụ:</div>
+                                    <div class="col-md-9">
+                                        <input type="text" @bind="invb.TLVB_TieuDePhu" name="tieudephu" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab6">
+                        <div class="block block-fill-white">
+                            <div class="content controls">
+                                <div class="form-row">
+                                    <div class="col-md-3">Tiền Tố:</div>
+                                    <div class="col-md-9">
+                                        <select class="form-control" @bind="tiento" name="tiento">
+                                            <option value="Căn cứ">Căn cứ</option>
+                                            <option value="Thực hiện">Thực hiện</option>
+                                            <option value="Quyết định">Quyết định</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-3">Cơ Sở Pháp Lý:</div>
+                                    <div class="col-md-9">
+                                        <select class="form-control" @bind="cosophaply" name="cosophaply">
+                                            <option value="Chỉ thị số">Chỉ thị số</option>
+                                            <option value="Công văn số">Công văn số</option>
+                                            <option value="Nghị định số">Nghị định số</option>
+                                            <option value="Quyết định số">Quyết định số</option>
+                                            <option value="Nghị quyết số">Nghị quyết số</option>
+                                            <option value="Thông tư số">Thông tư số</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-3">Nơi Ban Hành:</div>
+                                    <div class="col-md-9">
+                                        <select class="form-control" @bind="coquanbanhanh" name="coquanbanhanh">
+                                            @foreach (var bhlist in bhList)
+                                                {
+                                                    <option value="@bhlist.TenCoQuan">@bhlist.TenCoQuan</option>
+                                                }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="col-md-3">Số Công Văn:</div>
+                                    <div class="col-md-9">
+                                        <select class="select2" @bind="socongvan" name="socongvan" style="width: 100%;"
+                                            tabindex="-1">
+                                            <optgroup label="SỐ CÔNG VĂN ĐẾN">
+                                                @foreach (var den in vbdenList)
+                                                {
+                                                    <option value="@den.VBDen_SoDen @den.VBDen_TrichYeu">@den.VBDen_SoDen</option>
+                                                }
+                                            </optgroup>
+                                            <optgroup label="SỐ CÔNG VĂN ĐI">
+                                                @foreach (var di in diList)
+                                                {
+                                                    <option value="@di.VBDi_SoDi @di.VBDi_TrichYeu">@di.VBDi_SoDi</option>
+                                                }
+                                            </optgroup>
+                                        </select>
+
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="pull-right">
+                                        <button class="btn btn-primary" @onclick="TIENTO">CƠ SỞ PHÁP LÝ</button>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <div class="form-row">
+                                    <div class="col-md-12">
+                                        <textarea class="form-control" @bind="tiento_content"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="pull-right">
+                                        <button class="btn btn-primary" @onclick="xuattiento">XUẤT CƠ SỞ PHÁP LÝ</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane active" id="tab7">
+                        <div class="block block-fill-white">
+                            <div class="content controls">
+                                <div class="form-row">
+                                    <div class="col-md-3">Nội Dung</div>
+                                    <div class="col-md-9">
+                                        <BlazoredTextEditor @ref="@QuillHtml">
+                                            <ToolbarContent>
+                                                <select class="ql-header">
+                                                    <option selected=""></option>
+                                                    <option value="1"></option>
+                                                    <option value="2"></option>
+                                                    <option value="3"></option>
+                                                    <option value="4"></option>
+                                                    <option value="5"></option>
+                                                </select>
+                                                <span class="ql-formats">
+                                                    <button class="ql-bold"></button>
+                                                    <button class="ql-italic"></button>
+                                                    <button class="ql-underline"></button>
+                                                    <button class="ql-strike"></button>
+                                                </span>
+                                                <span class="ql-formats">
+                                                    <select class="ql-color"></select>
+                                                    <select class="ql-background"></select>
+                                                </span>
+                                                <span class="ql-formats">
+                                                    <button class="ql-list" value="ordered"></button>
+                                                    <button class="ql-list" value="bullet"></button>
+                                                </span>
+                                                <span class="ql-formats">
+                                                    <button class="ql-link"></button>
+                                                </span>
+                                            </ToolbarContent>
+                                            <EditorContent>
+                                                <div class="col-md-6">
+                                                    <div class="block">
+                                                        @* <input type="text" @bind="noidung" name="noidung"
+                                                            class="form-control" /> *@
+                                                        <textarea type="text" rows="5" @bind="noidung" name="noidung"
+                                                            class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                            </EditorContent>
+                                        </BlazoredTextEditor>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="pull-right">
+                                        <button class="btn btn-primary" @onclick="GetHTML">XUẤT NỘI DUNG VĂN BẢN</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab8">
+                        <div class="block block-fill-white">
+                            <div class="content controls">
+                                <div class="form-row">
+                                    <div class="col-md-3">Người Ký:</div>
+                                    <div class="col-md-9">
+                                        <select class="select2" @bind="invb.TLVB_NguoiKy" name="nguoiky" style="width: 100%;"
+                                            tabindex="-1">
+                                            @foreach (var tk in tkList)
+                                                {
+                                                    <option value="@tk.Taikhoanhoten" @onclick="(async () => await Load(tk.TaikhoanId))">@tk.Taikhoanhoten</option>
+                                                }
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-3">Nơi Nhận:</div>
+                                    <div class="col-md-9">
+                                        <BlazoredTextEditor @ref="@htmlnoinhan">
+                                            <ToolbarContent>
+                                                <select class="ql-header">
+                                                    <option selected=""></option>
+                                                    <option value="1"></option>
+                                                    <option value="2"></option>
+                                                    <option value="3"></option>
+                                                    <option value="4"></option>
+                                                    <option value="5"></option>
+                                                </select>
+                                                <span class="ql-formats">
+                                                    <button class="ql-bold"></button>
+                                                    <button class="ql-italic"></button>
+                                                    <button class="ql-underline"></button>
+                                                    <button class="ql-strike"></button>
+                                                </span>
+                                                <span class="ql-formats">
+                                                    <select class="ql-color"></select>
+                                                    <select class="ql-background"></select>
+                                                </span>
+                                                <span class="ql-formats">
+                                                    <button class="ql-list" value="ordered"></button>
+                                                    <button class="ql-list" value="bullet"></button>
+                                                </span>
+                                                <span class="ql-formats">
+                                                    <button class="ql-link"></button>
+                                                </span>
+                                            </ToolbarContent>
+                                            <EditorContent>
+                                                <div class="col-md-6">
+                                                    <div class="block">
+                                                        @* <input type="text" @bind="noidung" name="noidung"
+                                                            class="form-control" /> *@
+                                                        <textarea type="text" rows="5" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                            </EditorContent>
+                                        </BlazoredTextEditor>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="pull-right">
+                                        <button class="btn btn-primary" @onclick="GetHTML_NOINHAN">XUẤT NƠI NHẬN VĂN
+                                            BẢN</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="block">
+                <div class="col-md-12">
+                    <button @onclick="sukienloaddulieu" class="btn btn-primary btn-block">LƯU</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="block" id="divToPrint">            
+                <div class="block block-fill-white">
+                    <div class="content np">
+                        <p>
+                            @((MarkupString)@noidungvanban)
+                        </p>
+                        <p>
+                            @((MarkupString)@noidungxuatvanban)
+                        </p>
+                    </div>
+                </div>
+            <div class="block"> 
+                <button type="button" @onclick="In" class="btn btn-primary btn-block">XUẤT VĂN BẢN</button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    protected Taikhoans loginup = new Taikhoans();
+    protected async Task In(){
+        invb.TLVB_NoiDung=QuillHTMLContent;
+        invb.TLVB_NoiNhan=QuillHTMLNoinhan;
+        invb.TLVB_XuatTienTo=xuattientos;
+        invb.TLVB_ChucVu=tk.Taikhoan_ChucVu;
+        await invanban.Printvanban(invb);
+        invb.TLVB_NoiDungVanBan = noidungvanban;
+        await invanban.AddXuatvanban(invb);
+        Navigate.NavigateTo("/Xuatvanban");
+    }
+    protected List<Vanbandis> diList = new List<Vanbandis>();
+    protected List<Vanbandens> vbdenList = new List<Vanbandens>();
+    protected List<Loaivanbans> loaiList = new List<Loaivanbans>();
+    protected List<Coquanbanhanhs> bhList = new List<Coquanbanhanhs>();
+    protected List<Taikhoans> tkList = new List<Taikhoans>();
+    protected Taikhoans tk = new Taikhoans();
+    protected InVanBan invb = new InVanBan();
+     string noidungxuatvanban;
+     string noidungvanban;
+    BlazoredTextEditor QuillHtml, htmlnoinhan;
+    
+    string QuillHTMLContent, QuillHTMLNoinhan, tiento_content, xuattientos;
+    string donvi1, donvi2, quyetdinhso, thanhpho, tieude, tieudephu, tiento, cosophaply, coquanbanhanh, socongvan, nguoiky, noidung;
+    
+    //string noidungnut = "<!DOCTYPE html><html><body><button onclick='myFunction()' class='btn btn-primary btn-block'>XUẤT VĂN BẢN</button><script>function myFunction() {var myWindow = window.open('', '_self');myWindow.document.write('"+noidungvanban+"'); }</script></body></html>";
+    protected async override Task OnInitializedAsync()
+    {
+        loginup=await TK.shownoidung();
+        noidungvanban = "<!DOCTYPE html><html><head><title>QUẢN LÝ VĂN BẢN</title></head><body><div class='container'><div class='row'><div class='header'><div class='col-md-12'><div class='col-md-6'><h2 style='float: left; text-align: center;'>"+invb.TLVB_DonVi1+"<br>"+invb.TLVB_DonVi2+" <br>Số: "+invb.TLVB_QuyetDinhSo+"</h2></div><div class='col-md-6'><h2 style='float: right; text-align: center;'>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>Độc lập - Tự do - Hạnh phúc <br> "+invb.TLVB_ThanhPho+", ngày tháng năm</h2></div></div></div><div class='content np'><div class='col-md-12'><h2 style='text-align: center;'>"+invb.TLVB_TieuDe+"<br />"+invb.TLVB_TieuDePhu+"</h2></div><p>"+xuattientos+"<br/>"+QuillHTMLContent+"</p></div><div class='footer'><div class='col-md-12'><div class='col-md-6'><h2 style='float: left;'>Nơi Nhận <br>"+QuillHTMLNoinhan+"</h2></div><div class='col-md-6'><h2 style='float: right; text-align: center;'>"+tk.Taikhoan_ChucVu+"<br /><br /><br /><br />"+invb.TLVB_NguoiKy+"</h2></div></div></div></div></div></body></html>";
+        @* noidungxuatvanban = "<!DOCTYPE html><html><head><head><body><input type='button' value='Print this page' onclick='print' /></body></html>";   *@
+        
+    }
+    protected async Task TieuDe(){
+        if(loaiList.Count==0){
+            loaiList = await loaivb.GetAllLoaivanban();
+        }
+    }
+    protected async Task ThucHien(){
+        if(bhList.Count==0){
+            diList = await DI.GetAllVanbandi();
+            vbdenList = await DEN.GetAllVanbanden();
+            bhList = await CQBH.GetAllCoquanbanhanh();
+        }
+    }
+    protected async Task NguoiKy(){
+        if(tkList.Count==0){
+           tkList = await TK.GetAllTaikhoan();
+        }
+    }
+    protected async Task Load(string id)
+    {
+        tk = await TK.GetTaikhoanData(id);
+    }
+    public async void GetHTML()
+    {
+        QuillHTMLContent = await this.QuillHtml.GetHTML();
+        StateHasChanged();
+    }
+    public async void GetHTML_NOINHAN()
+    {
+        QuillHTMLNoinhan = await this.htmlnoinhan.GetHTML();
+        StateHasChanged();
+    }
+    public void TIENTO()
+    {
+        tiento_content = tiento + " " + cosophaply + " " + socongvan + " của " + coquanbanhanh + ".";
+    }
+    public void xuattiento(){
+        xuattientos = xuattientos + "<br/>" + tiento_content;
+        StateHasChanged();
+    }
+    public async Task sukienloaddulieu(){
+        await OnInitializedAsync();
+    }
+}

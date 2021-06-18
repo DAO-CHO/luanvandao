@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>6a44ee9d-e7d5-4216-91ed-847ed159e478</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- <PackageReference Include="BitMiracle.Docotic.Pdf" Version="7.4.11263" /> -->
+    <!-- <PackageReference Include="Append.Blazor.Printing" Version="1.0.0" /> -->
+    <PackageReference Include="Blazor.Extensions.Logging" Version="1.1.1" />
+    <PackageReference Include="Blazored.LocalStorage" Version="3.0.0" />
+    <PackageReference Include="Blazored.TextEditor" Version="1.0.3" />
+    <PackageReference Include="BlazorInputFile" Version="0.2.0" />
+    <PackageReference Include="bootstrap-fileinput" Version="5.1.3" />
+    <PackageReference Include="Cartopac.Microsoft.Practices.Web.UI.WebControls" Version="1.0.0" />
+    <PackageReference Include="DevExpress.Blazor.ProjectTemplates" Version="20.2.3" />
+    <PackageReference Include="DevExpress.Data" Version="20.2.6" />
+    <PackageReference Include="DevExtreme.AspNet.Data" Version="2.8.2" />
+    <PackageReference Include="Elmah.Io.AspNetCore.ExtensionsLogging" Version="3.8.68" />
+    <PackageReference Include="Elmah.Io.Extensions.Logging" Version="3.8.68" />
+    <PackageReference Include="EmbeddedBlazorContent" Version="1.10.0" />
+    <!-- <PackageReference Include="EvoPdf.PdfToImage" Version="8.0.0" /> -->
+    <PackageReference Include="Firebase.DotNet.Storage" Version="1.0.3" />
+    <PackageReference Include="FirebaseAuthentication.net" Version="3.4.0" />
+    <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
+    <PackageReference Include="Google.Cloud.Firestore" Version="2.2.0" />
+    <PackageReference Include="Google.Cloud.Storage.V1" Version="3.3.0" />
+    <!-- <PackageReference Include="HtmlAgilityPack" Version="1.11.31" /> -->
+    <!-- <PackageReference Include="GroupDocs.Parser" Version="20.12.0" /> -->
+    <!-- <PackageReference Include="IKVM.OpenJDK.Core" Version="7.2.4630.5" />
+    <PackageReference Include="IronOcr" Version="2020.12.2" />
+    <PackageReference Include="itext7.pdfocr.tesseract4" Version="1.0.2" /> -->
+    <PackageReference Include="iTextSharp" Version="5.5.13.2" />
+    <!-- <PackageReference Include="Leadtools.Wia" Version="21.0.0.2" />
+    <PackageReference Include="Magick.NET-Q16-x86" Version="7.23.1" /> -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="3.1.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="NuGet.Tessnet2" Version="1.1.1" />
+    <!-- <PackageReference Include="Pdf.Ocr" Version="4.4.4.1" />
+    <PackageReference Include="Pdfbox" Version="1.1.1" /> -->
+    <!-- <PackageReference Include="Pdfbox-IKVM" Version="1.8.9" /> -->
+    <!-- <PackageReference Include="PDFParser-CSharp" Version="1.2.2" /> -->
+    <PackageReference Include="Syncfusion.Blazor" Version="18.3.0.44" />
+    <!-- <PackageReference Include="Syncfusion.PDF.OCR.Net.Core" Version="18.4.0.39" /> -->
+    <!-- <PackageReference Include="System.Drawing.Common" Version="4.5.0" /> -->
+    <PackageReference Include="System.Security.Principal.Windows" Version="4.7.0" />
+    <!-- <PackageReference Include="Tesseract" Version="4.1.1" />
+    <PackageReference Include="Tesseract.Net.SDK" Version="1.15.342" />
+    <PackageReference Include="XpdfNet" Version="1.1.1" /> -->
+  </ItemGroup>
+</Project>

@@ -1,0 +1,147 @@
+@page "/Phongban"
+@using System.Threading.Tasks;
+@using System.Collections.Generic;
+@using QUANLIVANBAN.Data
+@inject NavigationManager NavigationManager
+@inject PhongbanData PHONGBAN 
+@inject CoquanData COQUAN 
+<div class="container">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="block ">
+                <div class="header">
+                    <h2>DANH SÁCH PHÒNG BAN</h2>
+                </div>
+                <div class="content">
+                    <table cellpadding="0" cellspacing="0" width="100%" class="table table-bordered table-striped sortable">
+                        <thead>
+                            <tr>
+                                <th width="27%">Phòng Ban</th>
+                                <th width="25%">Tên Cơ Quan</th>
+                                <th width="30%">Ghi Chú</th>
+                                <th width="15%"></th>
+                            </tr>
+                        </thead>
+                        @foreach (var phong in pbList)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@phong.Phongban</td>
+                                    <td>@phong.Phongban_CoQuan</td>
+                                    <td>@phong.Phongban_Ghichu</td>
+                                    <td>
+                                        <a class="widget-icon widget-icon-dark"
+                                            @onclick="(async () => await Load(phong.PhongBan_Id))"><span
+                                                class="icon-pencil"></span></a>
+                                        <a href="#modal_default_6" data-toggle="modal"  @onclick="(async () => await Loadxoa(phong.PhongBan_Id))"
+                                            class="widget-icon widget-icon-dark"><span class="icon-trash"></span></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <div class="modal" id="modal_default_6" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">TIẾP TỤC ĐỂ XÓA</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-success btn-clean" data-dismiss="modal"
+                                            @onclick="@(async () => {await Delete(pbxoa.PhongBan_Id);})">Tiếp Tục</button>
+                                            <button type="button" class="btn btn-danger btn-clean"
+                                            data-dismiss="modal">Thoát</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="block ">
+                <div class="header">
+                    <h2>Cập Nhật Phòng Ban</h2>
+                </div>
+                <div class="content controls">
+                    <EditForm Model="@pb">
+                    <DataAnnotationsValidator />
+                    <div class="form-row">
+                        <div class="col-md-3">Phòng Ban:</div>
+                        <div class="col-md-9">
+                            <InputText type="text" id="Phongban" class="form-control" @bind-Value="pb.Phongban"/>
+                            <ValidationMessage For="@(() => pb.Phongban)" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Cơ Quan:</div>
+                            <div class="col-md-9">
+                                        <select class="select2" @bind="pb.Phongban_CoQuan"  style="width: 100%;"
+                                            tabindex="-1">
+                                            @foreach (var phong in cqList)
+                                             {
+                                                <option value="@phong.CoQuan">@phong.CoQuan</option>
+                                             }
+                                        </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-3">Ghi Chú:</div>
+                        <div class="col-md-9">
+                                <InputTextArea class="form-control" id="CoQuan_GhiChu" @bind-Value="pb.Phongban_Ghichu"></InputTextArea>
+                                <ValidationMessage For="@(() => pb.Phongban_Ghichu)" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <button type="button" class="btn btn-primary" @onclick="Save">LƯU PHÒNG BAN </button>
+                    </div>
+                    </EditForm>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@code {
+    protected List<Phongbans> pbList = new List<Phongbans>();
+    protected List<Coquans> cqList = new List<Coquans>();
+    protected Phongbans pb = new Phongbans();
+    protected Phongbans pbxoa = new Phongbans();
+    protected async override Task OnInitializedAsync()
+    {
+        pbList = await PHONGBAN.GetAllPhongban();
+        cqList = await COQUAN.GetAllCoquan();
+    }
+    private async Task Save()
+    {
+        if (pb.PhongBan_Id == null)
+        {
+            await PHONGBAN.AddPhongban(pb);
+        }
+        else
+        {
+            await PHONGBAN.UpdatePhongban(pb);
+        }
+        await OnInitializedAsync();
+    }
+    protected async Task Load(string id)
+    {
+        pb = await PHONGBAN.GetPhongbanData(id);
+    }
+    protected async Task Loadxoa(string id)
+    {
+        pbxoa = await PHONGBAN.GetPhongbanData(id);
+    }
+    private async Task Delete(string id)
+    {
+        await PHONGBAN.DeletePhongban(id);
+        await OnInitializedAsync();
+    }
+
+}

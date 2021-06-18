@@ -1,0 +1,32 @@
+@page "/Xuatvanban"
+@using QUANLIVANBAN.Data
+@inject InVanBanData invanban
+<div class="container">
+     
+    <div class="row">
+         
+               <div class="col-md-12">
+                    <div class="block block-fill-white">
+                         @((MarkupString)@noidungvanban)
+                    </div>
+               </div>
+          
+     </div>
+     <div class="row">
+          <div class="no-printme">
+               <div class="block block-fill-white"> 
+                    <button type="button" onclick={window.print()}  class="btn btn-primary btn-block">IN VĂN BẢN</button>
+               </div>
+          </div>
+     </div>
+</div>
+@code {
+   string noidungvanban;
+   protected InVanBan invb = new InVanBan(); 
+   protected async override Task OnInitializedAsync()
+    {
+         invb=await invanban.shownoidung();
+         noidungvanban = "<!DOCTYPE html><html><head><title>QUẢN LÝ VĂN BẢN</title></head><body><div class='container'><div class='row'><div class='header'><div class='col-md-12'><div class='col-md-6'><h2 style='float: left; text-align: center;'>"+invb.TLVB_DonVi1+"<br>"+invb.TLVB_DonVi2+" <br>Số: "+invb.TLVB_QuyetDinhSo+"</h2></div><div class='col-md-6'><h2 style='float: right; text-align: center;'>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>Độc lập - Tự do - Hạnh phúc <br> "+invb.TLVB_ThanhPho+", ngày tháng năm</h2></div></div></div><div class='content np'><div class='col-md-12'><h2 style='text-align: center;'>"+invb.TLVB_TieuDe+"<br />"+invb.TLVB_TieuDePhu+"</h2></div><p>"+invb.TLVB_XuatTienTo+"<br/>"+invb.TLVB_NoiDung+"</p></div><div class='footer'><div class='col-md-12'><div class='col-md-6'><h2 style='float: left;'>Nơi Nhận <br>"+invb.TLVB_NoiNhan+"</h2></div><div class='col-md-6'><h2 style='float: right; text-align: center;'>"+invb.TLVB_ChucVu+"<br /><br /><br /><br />"+invb.TLVB_NguoiKy+"</h2></div></div></div></div></div></body></html>";    
+    }
+    
+}
